@@ -155,18 +155,30 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
                         Recommended Resources:
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {step.resources.map((res: any, idx: number) => (
-                          <a
-                            key={idx}
-                            href={res.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-xs text-primary hover:underline bg-background p-1.5 rounded border"
-                          >
-                            <span>{res.title}</span>
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        ))}
+                        {step.resources.map((res: any, idx: number) => {
+                          const isInternal = res.url.startsWith("/");
+                          return isInternal ? (
+                            <Link
+                              key={idx}
+                              href={res.url}
+                              className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline bg-primary/10 border border-primary/30 p-2 rounded-md"
+                            >
+                              <span>🎓 {res.title}</span>
+                              <ExternalLink className="h-3 w-3" />
+                            </Link>
+                          ) : (
+                            <a
+                              key={idx}
+                              href={res.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1 text-xs text-primary hover:underline bg-background p-1.5 rounded border"
+                            >
+                              <span>{res.title}</span>
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          );
+                        })}
                       </div>
                     </div>
                   )}

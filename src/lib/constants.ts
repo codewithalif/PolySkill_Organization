@@ -31,7 +31,9 @@ export const ADMIN_NAV_LINKS = [
   { label: "Students", href: "/admin/students", icon: "GraduationCap" },
   { label: "Projects", href: "/admin/projects", icon: "FolderKanban" },
   { label: "Reports", href: "/admin/reports", icon: "Flag" },
+  { label: "Skills Catalog", href: "/admin/skills", icon: "Zap" },
   { label: "Roadmaps", href: "/admin/roadmaps", icon: "Map" },
+  { label: "Announcements", href: "/admin/announcements", icon: "Megaphone" },
 ] as const;
 
 export const DEPARTMENTS = [

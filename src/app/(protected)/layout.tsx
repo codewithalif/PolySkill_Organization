@@ -31,6 +31,7 @@ import {
   Settings,
   GraduationCap,
   Flag,
+  Megaphone,
   LogOut,
   Menu,
   type LucideIcon,
@@ -49,6 +50,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Settings,
   GraduationCap,
   Flag,
+  Megaphone,
 };
 
 function NavItems({
@@ -156,7 +158,7 @@ export default async function ProtectedLayout({
         {/* Desktop Sidebar */}
         <aside className="hidden w-64 shrink-0 border-r lg:flex lg:flex-col">
           <div className="flex h-14 items-center border-b px-4">
-            <Link href="/dashboard" className="flex items-center gap-2 font-heading font-semibold">
+            <Link href="/" className="flex items-center gap-2 font-heading font-semibold hover:opacity-80 transition-opacity">
               <Zap className="h-5 w-5 text-primary" />
               PolySkill
             </Link>
@@ -185,7 +187,7 @@ export default async function ProtectedLayout({
                 <NavItems user={userForNav} />
               </SheetContent>
             </Sheet>
-            <Link href="/dashboard" className="flex items-center gap-2 font-heading font-semibold">
+            <Link href="/" className="flex items-center gap-2 font-heading font-semibold hover:opacity-80 transition-opacity">
               <Zap className="h-5 w-5 text-primary" />
               PolySkill
             </Link>
