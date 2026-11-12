@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppProviders } from "@/providers/app-providers";
 import { WelcomeSplash } from "@/components/shared/welcome-splash";
+import { AnimatedBackground } from "@/components/shared/animated-background";
+import { CursorFollower } from "@/components/shared/cursor-follower";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,8 +36,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col relative" suppressHydrationWarning>
         <AppProviders>
+          <AnimatedBackground />
+          <CursorFollower />
           <WelcomeSplash />
           {children}
         </AppProviders>

@@ -110,9 +110,8 @@ export default function LandingPage() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[500px] w-[800px] bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute inset-0 -z-10 pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
         </div>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
