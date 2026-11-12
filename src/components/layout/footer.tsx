@@ -117,9 +117,17 @@ export function Footer() {
             © {currentYear} {APP_NAME}. {t("footer.copyright", "All rights reserved.")}
           </p>
           <p className="text-xs text-muted-foreground">
-            {language === "bn"
-              ? "বাংলাদেশে ভালোবাসায় নির্মিত ❤️"
-              : "Made with ❤️ in Bangladesh"}
+            {language === "bn" ? (
+              <>
+                 তৈরি করেছেন{" "}
+                <span className="font-semibold text-foreground">Alif</span> 🛠
+              </>
+            ) : (
+              <>
+                Developed with 🛠 by{" "}
+                <span className="font-semibold text-foreground">Alif</span>
+              </>
+            )}
           </p>
         </div>
       </div>
