@@ -190,6 +190,13 @@ export async function resetPasswordAction(
  * Fetch authenticated user with database profile
  */
 export async function getCurrentUser() {
+  try {
+    const { connection } = await import("next/server");
+    await connection();
+  } catch {
+    // connection() might fail or be no-op in non-prerender contexts
+  }
+
   const supabase = await createClient();
   const {
     data: { user: authUser },

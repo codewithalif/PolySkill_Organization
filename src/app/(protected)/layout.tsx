@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import Link from "next/link";
 import { getCurrentUser } from "@/actions/auth";
 
@@ -135,6 +136,7 @@ export default async function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
+  await connection();
   const user = await getCurrentUser();
 
   if (!user) {
