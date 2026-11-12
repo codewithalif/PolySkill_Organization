@@ -80,21 +80,6 @@ const howItWorks = [
   },
 ];
 
-const featuredTech = [
-  "React",
-  "Next.js",
-  "TypeScript",
-  "Python",
-  "Node.js",
-  "MongoDB",
-  "PostgreSQL",
-  "Tailwind CSS",
-  "Flutter",
-  "Django",
-  "Express.js",
-  "Firebase",
-];
-
 export default function LandingPage() {
   return (
     <div className="flex flex-col">
@@ -138,19 +123,6 @@ export default function LandingPage() {
               <GraduationCap className="h-4 w-4" />
               <span>Trusted by students from 50+ polytechnic institutes</span>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Tech Tags */}
-      <section className="border-y bg-muted/30 py-6">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            {featuredTech.map((tech) => (
-              <Badge key={tech} variant="outline" className="text-xs">
-                {tech}
-              </Badge>
-            ))}
           </div>
         </div>
       </section>
