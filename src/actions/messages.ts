@@ -13,6 +13,7 @@ export interface ConversationWithDetails {
     id: string;
     full_name: string;
     username: string;
+    roll_number?: string | null;
     avatar_url: string | null;
     institute: string;
   } | null;
@@ -22,6 +23,17 @@ export interface ConversationWithDetails {
     sender_id: string;
   } | null;
   unread_count: number;
+}
+
+export interface SearchedStudent {
+  id: string;
+  full_name: string;
+  username: string;
+  roll_number: string | null;
+  avatar_url: string | null;
+  institute: string;
+  department: string;
+  semester: string;
 }
 
 export interface MessageWithSender {
@@ -71,7 +83,7 @@ export async function getConversationsAction(): Promise<
     // 2. Get other members for these conversations
     const { data: otherMembers } = await supabase
       .from("conversation_members")
-      .select("conversation_id, user:profiles(id, full_name, username, avatar_url, institute)")
+      .select("conversation_id, user:profiles(id, full_name, username, avatar_url, institute, roll_number)")
       .in("conversation_id", conversationIds)
       .neq("user_id", user.id);
 
@@ -136,10 +148,49 @@ export async function getConversationsAction(): Promise<
   }
 }
 
+/** Search polytechnic students by roll number (or name/username) to start a chat */
+export async function searchStudentByRollAction(
+  rollQuery: string
+): Promise<ActionResult<SearchedStudent[]>> {
+  try {
+    const trimmed = (rollQuery || "").trim();
+    if (!trimmed) {
+      return { success: true, data: [] };
+    }
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, message: "Authentication required", data: [] };
+    }
+
+    // Search by roll number first, or matching full_name / username, excluding current user
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, full_name, username, roll_number, avatar_url, institute, department, semester")
+      .neq("id", user.id)
+      .or(
+        `roll_number.ilike.%${trimmed}%,username.ilike.%${trimmed}%,full_name.ilike.%${trimmed}%`
+      )
+      .limit(10);
+
+    if (error) {
+      return { success: false, message: error.message, data: [] };
+    }
+
+    return { success: true, data: (data as SearchedStudent[]) || [] };
+  } catch (err: any) {
+    return { success: false, message: err.message, data: [] };
+  }
+}
+
 /** Get or create a direct conversation with another user */
 export async function getOrCreateConversationAction(
   otherUserId: string
-): Promise<ActionResult<{ conversationId: string }>> {
+): Promise<ActionResult<{ conversationId: string; otherUser?: SearchedStudent }>> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -152,6 +203,13 @@ export async function getOrCreateConversationAction(
   if (otherUserId === user.id) {
     return { success: false, message: "Cannot message yourself" };
   }
+
+  // Fetch the other user's profile
+  const { data: otherProfile } = await supabase
+    .from("profiles")
+    .select("id, full_name, username, roll_number, avatar_url, institute, department, semester")
+    .eq("id", otherUserId)
+    .single();
 
   // Check if existing conversation exists between these two
   const { data: myConvs } = await supabase
@@ -170,7 +228,13 @@ export async function getOrCreateConversationAction(
       .maybeSingle();
 
     if (match) {
-      return { success: true, data: { conversationId: match.conversation_id } };
+      return {
+        success: true,
+        data: {
+          conversationId: match.conversation_id,
+          otherUser: (otherProfile as SearchedStudent) || undefined,
+        },
+      };
     }
   }
 
@@ -191,7 +255,13 @@ export async function getOrCreateConversationAction(
     { conversation_id: newConv.id, user_id: otherUserId },
   ]);
 
-  return { success: true, data: { conversationId: newConv.id } };
+  return {
+    success: true,
+    data: {
+      conversationId: newConv.id,
+      otherUser: (otherProfile as SearchedStudent) || undefined,
+    },
+  };
 }
 
 /** Get message history for a conversation */

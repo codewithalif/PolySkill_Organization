@@ -101,8 +101,13 @@ export default async function ExploreStudentsPage({
                     <CardTitle className="text-base truncate">
                       {student.full_name}
                     </CardTitle>
-                    <CardDescription className="text-xs truncate">
-                      @{student.username}
+                    <CardDescription className="text-xs truncate flex items-center gap-1.5">
+                      <span>@{student.username}</span>
+                      {student.roll_number && (
+                        <span className="font-mono text-cyan-600 dark:text-cyan-400 font-medium">
+                          • Roll: {student.roll_number}
+                        </span>
+                      )}
                     </CardDescription>
                   </div>
                   <Badge variant="outline">{student.experience_level}</Badge>
@@ -159,7 +164,7 @@ export default async function ExploreStudentsPage({
                       )}
                     </div>
                     <Button asChild size="sm" variant="ghost">
-                      <Link href={`/messages`}>Message</Link>
+                      <Link href={`/messages?userId=${student.id}`}>Message</Link>
                     </Button>
                   </div>
                 </CardContent>

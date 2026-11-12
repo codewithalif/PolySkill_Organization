@@ -166,7 +166,7 @@ export async function getAdminStudentsAction(search?: string): Promise<ActionRes
 
     if (search && search.trim()) {
       query = query.or(
-        `full_name.ilike.%${search.trim()}%,username.ilike.%${search.trim()}%,email.ilike.%${search.trim()}%,institute.ilike.%${search.trim()}%`
+        `full_name.ilike.%${search.trim()}%,username.ilike.%${search.trim()}%,email.ilike.%${search.trim()}%,institute.ilike.%${search.trim()}%,roll_number.ilike.%${search.trim()}%`
       );
     }
 

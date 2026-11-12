@@ -22,6 +22,7 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rollNumber, setRollNumber] = useState("");
   const [institute, setInstitute] = useState<(typeof INSTITUTES)[number]>(INSTITUTES[0]);
   const [department, setDepartment] = useState<(typeof DEPARTMENTS)[number]>(DEPARTMENTS[0]);
   const [semester, setSemester] = useState<(typeof SEMESTERS)[number]>(SEMESTERS[0]);
@@ -42,6 +43,7 @@ export default function RegisterPage() {
         fullName,
         email,
         password,
+        rollNumber,
         institute,
         department,
         semester,
@@ -131,6 +133,24 @@ export default function RegisterPage() {
             />
             {fieldErrors.email && (
               <p className="text-xs text-destructive">{fieldErrors.email[0]}</p>
+            )}
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="rollNumber">Board Roll / Student Roll</Label>
+              <span className="text-[11px] text-muted-foreground">For verification & peer search</span>
+            </div>
+            <Input
+              id="rollNumber"
+              placeholder="e.g. 612345"
+              required
+              value={rollNumber}
+              onChange={(e) => setRollNumber(e.target.value.toUpperCase())}
+              disabled={isLoading}
+            />
+            {fieldErrors.rollNumber && (
+              <p className="text-xs text-destructive">{fieldErrors.rollNumber[0]}</p>
             )}
           </div>
 

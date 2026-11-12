@@ -15,6 +15,7 @@ export interface Database {
           full_name: string
           username: string
           email: string
+          roll_number: string | null
           avatar_url: string | null
           institute: string
           department: string
@@ -34,6 +35,7 @@ export interface Database {
           full_name: string
           username: string
           email: string
+          roll_number?: string | null
           avatar_url?: string | null
           institute: string
           department: string
@@ -53,6 +55,7 @@ export interface Database {
           full_name?: string
           username?: string
           email?: string
+          roll_number?: string | null
           avatar_url?: string | null
           institute?: string
           department?: string

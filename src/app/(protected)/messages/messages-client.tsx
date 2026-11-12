@@ -4,38 +4,66 @@ import { useState, useEffect, useRef } from "react";
 import {
   getMessagesAction,
   sendMessageAction,
+  searchStudentByRollAction,
+  getOrCreateConversationAction,
   type ConversationWithDetails,
   type MessageWithSender,
+  type SearchedStudent,
 } from "@/actions/messages";
 import { createClient } from "@/lib/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, Send, Loader2 } from "lucide-react";
+import {
+  MessageSquare,
+  Send,
+  Loader2,
+  Search,
+  UserPlus,
+  X,
+  GraduationCap,
+  Sparkles,
+} from "lucide-react";
 import { toast } from "sonner";
 
 interface MessagesClientProps {
   initialConversations: ConversationWithDetails[];
   currentUserId: string;
+  initialSelectedConvId?: string;
 }
 
 export function MessagesClient({
   initialConversations,
   currentUserId,
+  initialSelectedConvId,
 }: MessagesClientProps) {
   const [conversations, setConversations] = useState(initialConversations);
   const [selectedConvId, setSelectedConvId] = useState<string | null>(
-    initialConversations[0]?.id || null
+    initialSelectedConvId || initialConversations[0]?.id || null
   );
   const [messages, setMessages] = useState<MessageWithSender[]>([]);
   const [inputText, setInputText] = useState("");
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLInputElement>(null);
+
+  // Roll Number Search State
+  const [rollQuery, setRollQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchedStudent[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isStartingChat, setIsStartingChat] = useState<string | null>(null);
 
   const selectedConv = conversations.find((c) => c.id === selectedConvId);
+
+  // If initialSelectedConvId changes or was passed, select it
+  useEffect(() => {
+    if (initialSelectedConvId) {
+      setSelectedConvId(initialSelectedConvId);
+    }
+  }, [initialSelectedConvId]);
 
   // Load messages when selected conversation changes
   useEffect(() => {
@@ -97,6 +125,81 @@ export function MessagesClient({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Handle Search Friend by Roll
+  async function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (!rollQuery.trim()) return;
+
+    setIsSearching(true);
+    setHasSearched(true);
+
+    try {
+      const res = await searchStudentByRollAction(rollQuery);
+      if (res.success && res.data) {
+        setSearchResults(res.data);
+      } else {
+        setSearchResults([]);
+      }
+    } catch {
+      toast.error("Error searching for student");
+    } finally {
+      setIsSearching(false);
+    }
+  }
+
+  // Handle Start Chat with searched student
+  async function handleStartChat(student: SearchedStudent) {
+    setIsStartingChat(student.id);
+
+    try {
+      const res = await getOrCreateConversationAction(student.id);
+      if (res.success && res.data?.conversationId) {
+        const convId = res.data.conversationId;
+
+        // Check if conversation is already in our list
+        const existing = conversations.find((c) => c.id === convId);
+        if (!existing) {
+          // Create new conversation item locally
+          const newConv: ConversationWithDetails = {
+            id: convId,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            other_user: {
+              id: student.id,
+              full_name: student.full_name,
+              username: student.username,
+              roll_number: student.roll_number,
+              avatar_url: student.avatar_url,
+              institute: student.institute,
+            },
+            last_message: null,
+            unread_count: 0,
+          };
+          setConversations((prev) => [newConv, ...prev]);
+        }
+
+        setSelectedConvId(convId);
+        setRollQuery("");
+        setSearchResults([]);
+        setHasSearched(false);
+        toast.success(`Connected with ${student.full_name}!`);
+        setTimeout(() => chatInputRef.current?.focus(), 150);
+      } else {
+        toast.error(res.message || "Failed to start conversation");
+      }
+    } catch {
+      toast.error("Failed to start chat");
+    } finally {
+      setIsStartingChat(null);
+    }
+  }
+
+  function clearSearch() {
+    setRollQuery("");
+    setSearchResults([]);
+    setHasSearched(false);
+  }
+
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
     if (!selectedConvId || !inputText.trim() || isSending) return;
@@ -136,29 +239,152 @@ export function MessagesClient({
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Direct Messages</h1>
-        <p className="text-muted-foreground">
-          Realtime private messaging with polytechnic peers and teammates.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Direct Messages</h1>
+          <p className="text-muted-foreground text-sm">
+            Chat in real-time with polytechnic peers. Search friends by their Board Roll Number.
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[650px] border rounded-lg overflow-hidden bg-card text-card-foreground">
-        {/* Left: Conversations List */}
-        <div className="border-r flex flex-col h-full bg-muted/20">
-          <div className="p-3 border-b font-semibold text-sm">
-            Conversations ({conversations.length})
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[680px] border rounded-xl overflow-hidden bg-card text-card-foreground shadow-sm">
+        {/* Left: Conversations List & Roll Search */}
+        <div className="border-r flex flex-col h-full bg-muted/15">
+          {/* Roll Number Search Bar */}
+          <div className="p-3 border-b bg-background/50 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                <UserPlus className="h-3.5 w-3.5 text-primary" />
+                Find Friend by Roll Number
+              </span>
+              {hasSearched && (
+                <button
+                  type="button"
+                  onClick={clearSearch}
+                  className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1"
+                >
+                  <X className="h-3 w-3" /> Clear
+                </button>
+              )}
+            </div>
+
+            <form onSubmit={handleSearch} className="flex gap-1.5">
+              <div className="relative flex-1">
+                <Input
+                  placeholder="Enter Roll (e.g. 612345)..."
+                  value={rollQuery}
+                  onChange={(e) => {
+                    setRollQuery(e.target.value);
+                    if (!e.target.value.trim()) {
+                      setSearchResults([]);
+                      setHasSearched(false);
+                    }
+                  }}
+                  className="h-8 text-xs font-mono uppercase pl-2 pr-7"
+                />
+                {rollQuery && (
+                  <button
+                    type="button"
+                    onClick={clearSearch}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
+              <Button
+                type="submit"
+                size="sm"
+                className="h-8 px-2.5 text-xs bg-primary hover:bg-primary/90"
+                disabled={isSearching || !rollQuery.trim()}
+              >
+                {isSearching ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Search className="h-3.5 w-3.5" />
+                )}
+              </Button>
+            </form>
+
+            {/* Search Results Dropdown/Box */}
+            {hasSearched && (
+              <div className="mt-2 p-2 border rounded-lg bg-popover text-popover-foreground shadow-md max-h-56 overflow-y-auto space-y-2 text-xs">
+                {searchResults.length === 0 ? (
+                  <div className="text-center py-3 text-muted-foreground">
+                    <p className="font-medium">No student found</p>
+                    <p className="text-[10px] mt-0.5">Check the roll number or explore students</p>
+                  </div>
+                ) : (
+                  searchResults.map((student) => (
+                    <div
+                      key={student.id}
+                      className="flex items-center justify-between p-2 rounded-md hover:bg-muted/60 transition-colors gap-2 border border-border/40"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Avatar className="h-8 w-8 shrink-0">
+                          <AvatarImage src={student.avatar_url || ""} />
+                          <AvatarFallback className="text-[10px]">
+                            {(student.full_name || "S")[0]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0">
+                          <div className="font-semibold truncate text-xs">{student.full_name}</div>
+                          <div className="text-[10px] text-muted-foreground truncate flex items-center gap-1">
+                            {student.roll_number && (
+                              <span className="font-mono font-medium text-cyan-600 dark:text-cyan-400">
+                                Roll: {student.roll_number}
+                              </span>
+                            )}
+                            <span>• {student.institute}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Button
+                        size="sm"
+                        onClick={() => handleStartChat(student)}
+                        disabled={isStartingChat === student.id}
+                        className="h-7 px-2.5 text-[11px] shrink-0"
+                      >
+                        {isStartingChat === student.id ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <>
+                            <MessageSquare className="h-3 w-3 mr-1" /> Chat
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
-          <div className="flex-1 overflow-y-auto">
+          {/* Conversations Header */}
+          <div className="px-3 py-2 border-b font-medium text-xs text-muted-foreground flex items-center justify-between">
+            <span>Conversations</span>
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 font-mono">
+              {conversations.length}
+            </Badge>
+          </div>
+
+          {/* Conversations List */}
+          <div className="flex-1 overflow-y-auto divide-y divide-border/40">
             {conversations.length === 0 ? (
-              <div className="p-6 text-center text-xs text-muted-foreground">
-                No conversations yet. Visit Explore Students to start messaging peers!
+              <div className="p-6 text-center text-xs text-muted-foreground space-y-2">
+                <MessageSquare className="h-8 w-8 mx-auto opacity-30" />
+                <p>No active conversations yet.</p>
+                <p className="text-[11px] text-muted-foreground/80">
+                  Search above by your friend's <strong>Board Roll Number</strong> to start messaging!
+                </p>
               </div>
             ) : (
               conversations.map((conv) => {
                 const isSelected = conv.id === selectedConvId;
                 const name = conv.other_user?.full_name || "Student";
+                const roll = conv.other_user?.roll_number;
                 const initials = name
                   .split(" ")
                   .map((n) => n[0])
@@ -170,16 +396,16 @@ export function MessagesClient({
                   <button
                     key={conv.id}
                     onClick={() => setSelectedConvId(conv.id)}
-                    className={`w-full text-left p-3 flex items-start gap-3 border-b transition-colors hover:bg-muted/50 ${
-                      isSelected ? "bg-accent/40" : ""
+                    className={`w-full text-left p-3 flex items-start gap-3 transition-colors hover:bg-muted/50 ${
+                      isSelected ? "bg-accent/50 border-l-2 border-primary" : ""
                     }`}
                   >
-                    <Avatar className="h-10 w-10 mt-0.5">
+                    <Avatar className="h-10 w-10 mt-0.5 shrink-0">
                       <AvatarImage src={conv.other_user?.avatar_url || ""} />
                       <AvatarFallback>{initials}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-1">
                         <span className="font-semibold text-sm truncate">{name}</span>
                         {conv.unread_count > 0 && (
                           <Badge variant="default" className="text-[10px] px-1.5 py-0 h-4">
@@ -187,7 +413,18 @@ export function MessagesClient({
                           </Badge>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground truncate mt-0.5">
+                      <div className="flex items-center gap-1.5 mt-0.5 text-[11px]">
+                        {roll && (
+                          <span className="font-mono text-cyan-600 dark:text-cyan-400 font-medium">
+                            Roll: {roll}
+                          </span>
+                        )}
+                        {roll && <span className="text-muted-foreground">•</span>}
+                        <span className="text-muted-foreground truncate">
+                          {conv.other_user?.institute || "Polytechnic"}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground truncate mt-1">
                         {conv.last_message?.content || "No messages yet"}
                       </p>
                     </div>
@@ -199,23 +436,36 @@ export function MessagesClient({
         </div>
 
         {/* Right: Message Thread */}
-        <div className="md:col-span-2 flex flex-col h-full">
+        <div className="md:col-span-2 flex flex-col h-full bg-background">
           {selectedConv ? (
             <>
               {/* Header */}
-              <div className="p-3 border-b flex items-center gap-3">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={selectedConv.other_user?.avatar_url || ""} />
-                  <AvatarFallback>
-                    {(selectedConv.other_user?.full_name || "S")[0]}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="font-semibold text-sm">
-                    {selectedConv.other_user?.full_name}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {selectedConv.other_user?.institute}
+              <div className="p-3 border-b flex items-center justify-between gap-3 bg-muted/10">
+                <div className="flex items-center gap-3 min-w-0">
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src={selectedConv.other_user?.avatar_url || ""} />
+                    <AvatarFallback>
+                      {(selectedConv.other_user?.full_name || "S")[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-sm truncate">
+                        {selectedConv.other_user?.full_name}
+                      </span>
+                      {selectedConv.other_user?.roll_number && (
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] font-mono border-cyan-500/40 text-cyan-600 dark:text-cyan-300 bg-cyan-500/10"
+                        >
+                          Roll: {selectedConv.other_user.roll_number}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="text-xs text-muted-foreground truncate flex items-center gap-1">
+                      <GraduationCap className="h-3 w-3 shrink-0 text-muted-foreground/70" />
+                      <span>{selectedConv.other_user?.institute}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -227,9 +477,16 @@ export function MessagesClient({
                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                   </div>
                 ) : messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground text-xs space-y-1">
-                    <MessageSquare className="h-8 w-8 opacity-40" />
-                    <span>Say hello to start the conversation!</span>
+                  <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground text-xs space-y-2">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <Sparkles className="h-6 w-6" />
+                    </div>
+                    <span className="font-medium text-foreground">
+                      Start your conversation with {selectedConv.other_user?.full_name}
+                    </span>
+                    <span className="text-muted-foreground text-[11px] max-w-xs">
+                      Discuss polytechnic projects, semester tasks, or team collaboration!
+                    </span>
                   </div>
                 ) : (
                   messages.map((msg) => {
@@ -240,10 +497,10 @@ export function MessagesClient({
                         className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}
                       >
                         <div
-                          className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${
+                          className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-sm ${
                             isMe
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted text-foreground"
+                              ? "bg-primary text-primary-foreground rounded-br-xs"
+                              : "bg-muted text-foreground rounded-bl-xs"
                           }`}
                         >
                           {msg.content}
@@ -262,14 +519,21 @@ export function MessagesClient({
               </div>
 
               {/* Input Box */}
-              <form onSubmit={handleSend} className="p-3 border-t flex gap-2">
+              <form onSubmit={handleSend} className="p-3 border-t flex gap-2 bg-background/50">
                 <Input
+                  ref={chatInputRef}
                   placeholder="Type a message..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   disabled={isSending}
+                  className="rounded-full px-4"
                 />
-                <Button type="submit" disabled={isSending || !inputText.trim()}>
+                <Button
+                  type="submit"
+                  size="icon"
+                  className="rounded-full shrink-0"
+                  disabled={isSending || !inputText.trim()}
+                >
                   {isSending ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
@@ -279,9 +543,17 @@ export function MessagesClient({
               </form>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-center p-6 text-muted-foreground space-y-2">
-              <MessageSquare className="h-10 w-10 opacity-30" />
-              <p className="text-sm">Select a conversation or start a new one</p>
+            <div className="flex flex-col items-center justify-center h-full text-center p-6 text-muted-foreground space-y-3">
+              <div className="h-16 w-16 rounded-full bg-muted/60 flex items-center justify-center">
+                <MessageSquare className="h-8 w-8 opacity-40 text-primary" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold text-foreground text-sm">No Conversation Selected</h3>
+                <p className="text-xs text-muted-foreground max-w-sm">
+                  Select an existing conversation on the left, or enter your friend's{" "}
+                  <strong>Board Roll Number</strong> above to start a direct chat!
+                </p>
+              </div>
             </div>
           )}
         </div>

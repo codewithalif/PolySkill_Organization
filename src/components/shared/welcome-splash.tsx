@@ -1,44 +1,35 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 import { Sparkles, ArrowRight, Zap, GraduationCap, Code2, Users } from "lucide-react";
 import { useLanguage } from "@/providers/language-provider";
 
-// Safe hydration subscription
-const emptySubscribe = () => () => {};
-function useMounted() {
-  return useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false
-  );
-}
-
 export function WelcomeSplash() {
-  const isMounted = useMounted();
-  const [isDismissed, setIsDismissed] = useState(false);
+  // Lazy initializer: runs synchronously on first client render (hydration)
+  // so the splash is never shown if already seen — zero flash.
+  const [isDismissed, setIsDismissed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return !!sessionStorage.getItem("polyskill_welcome_seen");
+    } catch {
+      return false;
+    }
+  });
   const [isExiting, setIsExiting] = useState(false);
   const { t } = useLanguage();
 
-  if (!isMounted) {
-    return null;
-  }
-
-  // Session storage check: once per session
-  const hasSeen =
-    typeof window !== "undefined"
-      ? sessionStorage.getItem("polyskill_welcome_seen")
-      : null;
-
-  if (hasSeen || isDismissed) {
+  if (isDismissed) {
     return null;
   }
 
   function handleEnter() {
     setIsExiting(true);
     setTimeout(() => {
-      if (typeof window !== "undefined") {
+      try {
         sessionStorage.setItem("polyskill_welcome_seen", "true");
+        document.documentElement.classList.add("splash-dismissed");
+      } catch {
+        // Ignore
       }
       setIsDismissed(true);
     }, 700); // 700ms ultra-smooth transition
@@ -46,6 +37,7 @@ export function WelcomeSplash() {
 
   return (
     <div
+      id="polyskill-welcome-splash"
       className={`fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden bg-slate-950 text-slate-100 select-none transition-all duration-700 cubic-bezier(0.16, 1, 0.3, 1) ${
         isExiting
           ? "opacity-0 scale-110 pointer-events-none blur-md"

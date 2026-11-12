@@ -130,6 +130,10 @@
 }
 
 /* Animated Cyber Background Utilities */
+html.splash-dismissed #polyskill-welcome-splash {
+  display: none !important;
+}
+
 .poly-bg-orb-1 {
   animation: polyFloat1 20s ease-in-out infinite alternate;
 }

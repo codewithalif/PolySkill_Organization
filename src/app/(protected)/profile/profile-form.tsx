@@ -30,6 +30,7 @@ interface ProfileFormProps {
     fullName: string;
     username: string;
     email: string;
+    rollNumber?: string;
     avatar?: string;
     institute: string;
     department: string;
@@ -45,6 +46,7 @@ interface ProfileFormProps {
 export function ProfileForm({ initialProfile }: ProfileFormProps) {
   const [formData, setFormData] = useState({
     fullName: initialProfile.fullName,
+    rollNumber: initialProfile.rollNumber || "",
     bio: initialProfile.bio || "",
     institute: initialProfile.institute,
     department: initialProfile.department,
@@ -178,7 +180,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
           <CardDescription>Details that other polytechnic students will see</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="fullName">Full Name</Label>
               <Input
@@ -186,6 +188,15 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="rollNumber">Board Roll / Roll No</Label>
+              <Input
+                id="rollNumber"
+                placeholder="e.g. 612345"
+                value={formData.rollNumber}
+                onChange={(e) => setFormData({ ...formData, rollNumber: e.target.value.toUpperCase() })}
               />
             </div>
             <div className="space-y-2">
