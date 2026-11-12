@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppProviders } from "@/providers/app-providers";
+import { WelcomeSplash } from "@/components/shared/welcome-splash";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,8 +34,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
-        <AppProviders>{children}</AppProviders>
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <AppProviders>
+          <WelcomeSplash />
+          {children}
+        </AppProviders>
       </body>
     </html>
   );

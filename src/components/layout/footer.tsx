@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { Sparkles, Mail } from "lucide-react";
-import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants";
 import { Separator } from "@/components/ui/separator";
+import { useLanguage } from "@/providers/language-provider";
 
 function GithubIcon({ className }: { className?: string }) {
   return (
@@ -17,31 +20,36 @@ function GithubIcon({ className }: { className?: string }) {
   );
 }
 
-async function getCurrentYear() {
-  "use cache";
-  return new Date().getFullYear();
-}
+export function Footer() {
+  const { t, language } = useLanguage();
+  const currentYear = 2026;
 
-export async function Footer() {
-  const currentYear = await getCurrentYear();
-
-  const footerLinks = {
-    Platform: [
-      { label: "Explore Projects", href: "/explore/projects" },
-      { label: "Explore Students", href: "/explore/students" },
-      { label: "Learning Roadmaps", href: "/roadmaps" },
-      { label: "Team Finder", href: "/teams" },
-    ],
-    Resources: [
-      { label: "About Us", href: "/about" },
-      { label: "How It Works", href: "/about#how-it-works" },
-      { label: "FAQ", href: "/about#faq" },
-    ],
-    Legal: [
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
-    ],
-  };
+  const footerCategories = [
+    {
+      title: t("footer.platform", "Platform"),
+      links: [
+        { label: t("nav.exploreProjects", "Explore Projects"), href: "/explore/projects" },
+        { label: t("nav.exploreStudents", "Explore Students"), href: "/explore/students" },
+        { label: t("nav.roadmaps", "Learning Roadmaps"), href: "/roadmaps" },
+        { label: t("features.teamFinderTitle", "Team Finder"), href: "/teams" },
+      ],
+    },
+    {
+      title: t("footer.resources", "Resources"),
+      links: [
+        { label: t("footer.aboutUs", "About Us"), href: "/about" },
+        { label: t("footer.howItWorks", "How It Works"), href: "/about#how-it-works" },
+        { label: t("footer.faq", "FAQ"), href: "/about#faq" },
+      ],
+    },
+    {
+      title: t("footer.legal", "Legal"),
+      links: [
+        { label: t("footer.privacy", "Privacy Policy"), href: "#" },
+        { label: t("footer.terms", "Terms of Service"), href: "#" },
+      ],
+    },
+  ];
 
   return (
     <footer className="border-t bg-muted/30">
@@ -57,7 +65,10 @@ export async function Footer() {
               <span className="text-lg font-bold">{APP_NAME}</span>
             </Link>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-              {APP_TAGLINE}
+              {t(
+                "footer.tagline",
+                "Empowering polytechnic diploma students of Bangladesh to build skills, showcase projects, and connect with peers."
+              )}
             </p>
             <div className="mt-4 flex gap-3">
               <a
@@ -79,11 +90,11 @@ export async function Footer() {
           </div>
 
           {/* Links */}
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
-              <h3 className="text-sm font-semibold">{category}</h3>
+          {footerCategories.map((cat, idx) => (
+            <div key={idx}>
+              <h3 className="text-sm font-semibold">{cat.title}</h3>
               <ul className="mt-3 space-y-2">
-                {links.map((link) => (
+                {cat.links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
@@ -103,10 +114,12 @@ export async function Footer() {
         {/* Bottom bar */}
         <div className="flex flex-col items-center justify-between gap-4 py-6 sm:flex-row">
           <p className="text-xs text-muted-foreground">
-            © {currentYear} {APP_NAME}. Built for polytechnic students.
+            © {currentYear} {APP_NAME}. {t("footer.copyright", "All rights reserved.")}
           </p>
           <p className="text-xs text-muted-foreground">
-            Made with ❤️ in Bangladesh
+            {language === "bn"
+              ? "বাংলাদেশে ভালোবাসায় নির্মিত ❤️"
+              : "Made with ❤️ in Bangladesh"}
           </p>
         </div>
       </div>

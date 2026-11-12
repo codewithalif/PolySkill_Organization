@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { LanguageToggle } from "@/components/layout/language-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,11 +30,30 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { NAV_LINKS, APP_NAME } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
+import { useLanguage } from "@/providers/language-provider";
 
 export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, isLoading, signOut } = useAuth();
+  const { t } = useLanguage();
+
+  const getNavLabel = (href: string, defaultLabel: string) => {
+    switch (href) {
+      case "/":
+        return t("nav.home", defaultLabel);
+      case "/about":
+        return t("nav.about", defaultLabel);
+      case "/explore/projects":
+        return t("nav.exploreProjects", defaultLabel);
+      case "/explore/students":
+        return t("nav.exploreStudents", defaultLabel);
+      case "/roadmaps":
+        return t("nav.roadmaps", defaultLabel);
+      default:
+        return defaultLabel;
+    }
+  };
 
   const getInitials = (name?: string) => {
     if (!name) return "PS";
@@ -69,7 +89,7 @@ export function Navbar() {
                   : "text-muted-foreground"
               )}
             >
-              {link.label}
+              {getNavLabel(link.href, link.label)}
             </Link>
           ))}
           {isAuthenticated && (
@@ -82,13 +102,14 @@ export function Navbar() {
                   : "text-muted-foreground"
               )}
             >
-              Dashboard
+              {t("nav.dashboard", "Dashboard")}
             </Link>
           )}
         </div>
 
         {/* Right section */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <LanguageToggle />
           <ThemeToggle />
 
           {!isLoading && (
@@ -117,25 +138,25 @@ export function Navbar() {
                         render={<Link href="/dashboard" className="flex items-center gap-2 cursor-pointer w-full" />}
                       >
                         <LayoutDashboard className="h-4 w-4" />
-                        <span>Dashboard</span>
+                        <span>{t("nav.dashboard", "Dashboard")}</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         render={<Link href="/profile" className="flex items-center gap-2 cursor-pointer w-full" />}
                       >
                         <UserIcon className="h-4 w-4" />
-                        <span>My Profile</span>
+                        <span>{t("nav.profile", "My Profile")}</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         render={<Link href="/skills" className="flex items-center gap-2 cursor-pointer w-full" />}
                       >
                         <Zap className="h-4 w-4" />
-                        <span>My Skills</span>
+                        <span>{t("nav.mySkills", "My Skills")}</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         render={<Link href="/projects" className="flex items-center gap-2 cursor-pointer w-full" />}
                       >
                         <FolderKanban className="h-4 w-4" />
-                        <span>My Projects</span>
+                        <span>{t("nav.myProjects", "My Projects")}</span>
                       </DropdownMenuItem>
                       {user.role === "admin" && (
                         <DropdownMenuItem
@@ -147,14 +168,14 @@ export function Navbar() {
                           }
                         >
                           <ShieldAlert className="h-4 w-4" />
-                          <span>Admin Panel</span>
+                          <span>{t("nav.adminPanel", "Admin Panel")}</span>
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem
                         render={<Link href="/settings" className="flex items-center gap-2 cursor-pointer w-full" />}
                       >
                         <Settings className="h-4 w-4" />
-                        <span>Settings</span>
+                        <span>{t("nav.settings", "Settings")}</span>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
@@ -163,7 +184,7 @@ export function Navbar() {
                         onClick={() => signOut()}
                       >
                         <LogOut className="h-4 w-4 mr-2" />
-                        <span>Log Out</span>
+                        <span>{t("nav.signOut", "Log Out")}</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -171,10 +192,10 @@ export function Navbar() {
               ) : (
                 <div className="hidden items-center gap-2 sm:flex">
                   <Button variant="ghost" size="sm" asChild>
-                    <Link href="/login">Log in</Link>
+                    <Link href="/login">{t("nav.signIn", "Log in")}</Link>
                   </Button>
                   <Button size="sm" asChild>
-                    <Link href="/register">Join PolySkill</Link>
+                    <Link href="/register">{t("nav.register", "Join PolySkill")}</Link>
                   </Button>
                 </div>
               )}
@@ -214,7 +235,7 @@ export function Navbar() {
                     : "text-muted-foreground"
                 )}
               >
-                {link.label}
+                {getNavLabel(link.href, link.label)}
               </Link>
             ))}
 
@@ -225,15 +246,31 @@ export function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
                 >
-                  Dashboard
+                  {t("nav.dashboard", "Dashboard")}
                 </Link>
                 <Link
                   href="/profile"
                   onClick={() => setMobileMenuOpen(false)}
                   className="px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
                 >
-                  My Profile
+                  {t("nav.profile", "My Profile")}
                 </Link>
+                <Link
+                  href="/projects"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
+                >
+                  {t("nav.myProjects", "My Projects")}
+                </Link>
+                {user?.role === "admin" && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-3 py-2 text-sm font-medium rounded-md text-amber-600 dark:text-amber-400 hover:bg-accent"
+                  >
+                    {t("nav.adminPanel", "Admin Panel")}
+                  </Link>
+                )}
                 <Button
                   variant="destructive"
                   size="sm"
@@ -243,22 +280,22 @@ export function Navbar() {
                     signOut();
                   }}
                 >
-                  Log out
+                  {t("nav.signOut", "Log Out")}
                 </Button>
               </div>
             ) : (
               <div className="flex flex-col gap-2 pt-3 border-t mt-3">
-                <Button variant="ghost" size="sm" asChild>
+                <Button variant="ghost" size="sm" asChild className="w-full justify-center">
                   <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                    Log in
+                    {t("nav.signIn", "Log in")}
                   </Link>
                 </Button>
-                <Button size="sm" asChild>
+                <Button size="sm" asChild className="w-full justify-center">
                   <Link
                     href="/register"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Join PolySkill
+                    {t("nav.register", "Join PolySkill")}
                   </Link>
                 </Button>
               </div>

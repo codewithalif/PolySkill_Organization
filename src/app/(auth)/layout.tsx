@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Sparkles, ArrowLeft } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { LanguageToggle } from "@/components/layout/language-toggle";
 import { APP_NAME } from "@/lib/constants";
 
 export default function AuthLayout({
@@ -19,7 +20,8 @@ export default function AuthLayout({
           <ArrowLeft className="h-4 w-4" />
           Back to Home
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
           <ThemeToggle />
         </div>
       </header>
