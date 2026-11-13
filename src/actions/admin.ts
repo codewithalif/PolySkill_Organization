@@ -21,11 +21,11 @@ async function requireAdmin() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "admin") {
+  if (profile?.role !== "admin" && profile?.role !== "sub-admin") {
     throw new Error("Admin privileges required");
   }
 
-  return { supabase, user };
+  return { supabase, user, role: profile.role as "admin" | "sub-admin" };
 }
 
 /** Get high-level admin dashboard statistics */
@@ -181,14 +181,41 @@ export async function getAdminStudentsAction(search?: string): Promise<ActionRes
 
 export async function updateStudentRoleAction(
   studentId: string,
-  newRole: "student" | "admin"
+  newRole: "student" | "sub-admin"
 ): Promise<ActionResult> {
   try {
-    const { supabase, user } = await requireAdmin();
+    const { supabase, user, role: callerRole } = await requireAdmin();
 
-    // Prevent removing own admin role
-    if (studentId === user.id && newRole !== "admin") {
-      return { success: false, message: "You cannot demote yourself from admin." };
+    // Prevent modifying yourself
+    if (studentId === user.id) {
+      return { success: false, message: "You cannot change your own role." };
+    }
+
+    // Check target student's current role
+    const { data: targetStudent, error: fetchErr } = await supabase
+      .from("profiles")
+      .select("role, full_name")
+      .eq("id", studentId)
+      .single();
+
+    if (fetchErr || !targetStudent) {
+      return { success: false, message: "Student not found." };
+    }
+
+    // Protect main / super admin: nobody can demote or alter a main admin
+    if (targetStudent.role === "admin") {
+      return {
+        success: false,
+        message: "Main Administrator cannot be modified.",
+      };
+    }
+
+    // Sub-admins cannot promote or modify other sub-admins
+    if (callerRole === "sub-admin" && targetStudent.role === "sub-admin") {
+      return {
+        success: false,
+        message: "Sub-admins cannot modify other sub-admins.",
+      };
     }
 
     const { error } = await supabase
@@ -199,7 +226,60 @@ export async function updateStudentRoleAction(
     if (error) return { success: false, message: error.message };
 
     revalidatePath("/admin/students");
-    return { success: true, message: `User role updated to ${newRole}` };
+    revalidatePath("/explore/students");
+    const roleLabel = newRole === "sub-admin" ? "Sub-Admin" : "Student";
+    return { success: true, message: `Role updated to ${roleLabel} successfully!` };
+  } catch (err: any) {
+    return { success: false, message: err.message };
+  }
+}
+
+/** Remove / delete a student from the platform */
+export async function removeStudentAction(studentId: string): Promise<ActionResult> {
+  try {
+    const { supabase, user, role: callerRole } = await requireAdmin();
+
+    // Cannot delete yourself
+    if (studentId === user.id) {
+      return { success: false, message: "You cannot delete your own account." };
+    }
+
+    // Fetch target user to ensure not deleting a main admin
+    const { data: targetUser, error: fetchErr } = await supabase
+      .from("profiles")
+      .select("role, full_name")
+      .eq("id", studentId)
+      .single();
+
+    if (fetchErr || !targetUser) {
+      return { success: false, message: "Student account not found." };
+    }
+
+    if (targetUser.role === "admin") {
+      return { success: false, message: "Main Administrator account cannot be removed." };
+    }
+
+    if (callerRole === "sub-admin" && targetUser.role === "sub-admin") {
+      return { success: false, message: "Only Main Admin can remove other sub-admins." };
+    }
+
+    // Delete student profile (cascades to projects, skills, team memberships, etc.)
+    const { error } = await supabase
+      .from("profiles")
+      .delete()
+      .eq("id", studentId);
+
+    if (error) {
+      return { success: false, message: error.message };
+    }
+
+    revalidatePath("/admin/students");
+    revalidatePath("/admin");
+    revalidatePath("/explore/students");
+    return {
+      success: true,
+      message: `${targetUser.full_name || "Student"} has been removed successfully.`,
+    };
   } catch (err: any) {
     return { success: false, message: err.message };
   }

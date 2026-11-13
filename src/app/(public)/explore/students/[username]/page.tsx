@@ -153,6 +153,11 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
                       Admin
                     </Badge>
                   )}
+                  {student.role === "sub-admin" && (
+                    <Badge variant="default" className="bg-indigo-600 text-xs">
+                      Sub-Admin
+                    </Badge>
+                  )}
                 </div>
 
                 <p className="text-sm text-muted-foreground font-mono">

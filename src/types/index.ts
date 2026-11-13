@@ -16,7 +16,7 @@ export interface User {
   portfolioUrl?: string;
   linkedinUrl?: string;
   experienceLevel: "Beginner" | "Intermediate" | "Advanced";
-  role: "student" | "admin";
+  role: "student" | "sub-admin" | "admin";
   profileCompletion: number;
   joinedAt: string;
 }

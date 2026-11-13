@@ -96,11 +96,11 @@ function NavItems({
           );
         })}
 
-        {user.role === "admin" && (
+        {(user.role === "admin" || user.role === "sub-admin") && (
           <>
             <div className="pt-3 pb-1 px-3">
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Admin
+                {user.role === "admin" ? "Admin" : "Sub-Admin"}
               </p>
             </div>
             {ADMIN_NAV_LINKS.map((link) => {

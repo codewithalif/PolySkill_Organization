@@ -158,7 +158,7 @@ export function Navbar() {
                         <FolderKanban className="h-4 w-4" />
                         <span>{t("nav.myProjects", "My Projects")}</span>
                       </DropdownMenuItem>
-                      {user.role === "admin" && (
+                      {(user.role === "admin" || user.role === "sub-admin") && (
                         <DropdownMenuItem
                           render={
                             <Link
@@ -168,7 +168,11 @@ export function Navbar() {
                           }
                         >
                           <ShieldAlert className="h-4 w-4" />
-                          <span>{t("nav.adminPanel", "Admin Panel")}</span>
+                          <span>
+                            {user.role === "admin"
+                              ? t("nav.adminPanel", "Admin Panel")
+                              : "Sub-Admin Panel"}
+                          </span>
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem
@@ -262,13 +266,15 @@ export function Navbar() {
                 >
                   {t("nav.myProjects", "My Projects")}
                 </Link>
-                {user?.role === "admin" && (
+                {(user?.role === "admin" || user?.role === "sub-admin") && (
                   <Link
                     href="/admin"
                     onClick={() => setMobileMenuOpen(false)}
                     className="px-3 py-2 text-sm font-medium rounded-md text-amber-600 dark:text-amber-400 hover:bg-accent"
                   >
-                    {t("nav.adminPanel", "Admin Panel")}
+                    {user?.role === "admin"
+                      ? t("nav.adminPanel", "Admin Panel")
+                      : "Sub-Admin Panel"}
                   </Link>
                 )}
                 <Button

@@ -12,7 +12,7 @@ export const metadata = {
 
 export default async function AdminReportsPage() {
   const user = await getCurrentUser();
-  if (!user || user.role !== "admin") {
+  if (!user || (user.role !== "admin" && user.role !== "sub-admin")) {
     redirect("/dashboard");
   }
 

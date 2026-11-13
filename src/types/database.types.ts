@@ -25,7 +25,7 @@ export interface Database {
           portfolio_url: string | null
           linkedin_url: string | null
           experience_level: "Beginner" | "Intermediate" | "Advanced"
-          role: "student" | "admin"
+          role: "student" | "sub-admin" | "admin"
           profile_completion: number
           created_at: string
           updated_at: string
@@ -45,7 +45,7 @@ export interface Database {
           portfolio_url?: string | null
           linkedin_url?: string | null
           experience_level?: "Beginner" | "Intermediate" | "Advanced"
-          role?: "student" | "admin"
+          role?: "student" | "sub-admin" | "admin"
           profile_completion?: number
           created_at?: string
           updated_at?: string
@@ -65,7 +65,7 @@ export interface Database {
           portfolio_url?: string | null
           linkedin_url?: string | null
           experience_level?: "Beginner" | "Intermediate" | "Advanced"
-          role?: "student" | "admin"
+          role?: "student" | "sub-admin" | "admin"
           profile_completion?: number
           created_at?: string
           updated_at?: string
