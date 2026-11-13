@@ -67,6 +67,35 @@ export async function updateProfileAction(
     .eq("id", user.id);
 
   if (error) {
+    if (error.message.includes("whatsapp_number")) {
+      // Attempt to save other fields so other profile data is not lost
+      await supabase
+        .from("profiles")
+        .update({
+          full_name: fullName,
+          bio: bio || null,
+          institute,
+          department,
+          semester,
+          experience_level: experienceLevel,
+          github_url: githubUrl || null,
+          portfolio_url: portfolioUrl || null,
+          linkedin_url: linkedinUrl || null,
+          profile_completion: Math.min(100, completion),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id);
+
+      revalidatePath("/profile");
+      revalidatePath("/dashboard");
+
+      return {
+        success: false,
+        message:
+          "Supabase Database-এ 'whatsapp_number' কলামটি এখনো অ্যাড করা হয়নি। দয়া করে Supabase SQL Editor-এ মাইগ্রেশন স্ক্রিপ্টটি রান করুন।",
+      };
+    }
+
     return {
       success: false,
       message: error.message,

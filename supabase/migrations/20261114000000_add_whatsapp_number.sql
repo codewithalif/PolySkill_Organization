@@ -63,3 +63,6 @@ BEGIN
     RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 4. Reload PostgREST schema cache so changes take effect immediately
+NOTIFY pgrst, 'reload schema';
