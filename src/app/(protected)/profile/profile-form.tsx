@@ -31,7 +31,6 @@ interface ProfileFormProps {
     username: string;
     email: string;
     whatsappNumber?: string;
-    rollNumber?: string;
     avatar?: string;
     institute: string;
     department: string;
@@ -48,7 +47,6 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
   const [formData, setFormData] = useState({
     fullName: initialProfile.fullName,
     whatsappNumber: initialProfile.whatsappNumber || "",
-    rollNumber: initialProfile.rollNumber || "",
     bio: initialProfile.bio || "",
     institute: initialProfile.institute,
     department: initialProfile.department,
@@ -103,6 +101,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
     try {
       const res = await updateProfileAction({
         fullName: formData.fullName,
+        whatsappNumber: formData.whatsappNumber ? formData.whatsappNumber.trim() : undefined,
         bio: formData.bio || undefined,
         institute: formData.institute as any,
         department: formData.department as any,

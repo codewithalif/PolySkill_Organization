@@ -14,7 +14,7 @@ export const metadata = {
 export default async function MessagesPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ userId?: string; roll?: string }>;
+  searchParams?: Promise<{ userId?: string; whatsapp?: string }>;
 }) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
@@ -27,12 +27,12 @@ export default async function MessagesPage({
     if (res.success && res.data?.conversationId) {
       targetConvId = res.data.conversationId;
     }
-  } else if (params?.roll) {
+  } else if (params?.whatsapp) {
     const supabase = await createClient();
     const { data: matched } = await supabase
       .from("profiles")
       .select("id")
-      .ilike("roll_number", params.roll.trim())
+      .ilike("whatsapp_number", `%${params.whatsapp.trim()}%`)
       .neq("id", user.id)
       .limit(1)
       .maybeSingle();

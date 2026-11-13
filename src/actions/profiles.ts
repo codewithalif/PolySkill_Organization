@@ -9,7 +9,6 @@ type ProfileRow = {
   username: string;
   email: string;
   whatsapp_number: string | null;
-  roll_number: string | null;
   avatar_url: string | null;
   institute: string;
   department: string;

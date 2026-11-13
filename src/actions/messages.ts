@@ -30,7 +30,6 @@ export interface SearchedStudent {
   full_name: string;
   username: string;
   whatsapp_number?: string | null;
-  roll_number?: string | null;
   avatar_url: string | null;
   institute: string;
   department: string;
@@ -170,7 +169,7 @@ export async function searchStudentByRollAction(
 
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, full_name, username, whatsapp_number, roll_number, avatar_url, institute, department, semester")
+      .select("id, full_name, username, whatsapp_number, avatar_url, institute, department, semester")
       .neq("id", user.id)
       .or(
         `username.ilike.%${trimmed}%,full_name.ilike.%${trimmed}%,whatsapp_number.ilike.%${trimmed}%`
@@ -207,7 +206,7 @@ export async function getOrCreateConversationAction(
   // Fetch the other user's profile
   const { data: otherProfile } = await supabase
     .from("profiles")
-    .select("id, full_name, username, roll_number, avatar_url, institute, department, semester")
+    .select("id, full_name, username, whatsapp_number, avatar_url, institute, department, semester")
     .eq("id", otherUserId)
     .single();
 

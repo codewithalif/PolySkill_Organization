@@ -7,7 +7,6 @@ export interface User {
   username: string;
   email: string;
   whatsappNumber?: string;
-  rollNumber?: string;
   avatar?: string;
   institute: string;
   department: string;

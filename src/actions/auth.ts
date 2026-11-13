@@ -224,7 +224,6 @@ export async function getCurrentUser() {
     username: profile.username,
     email: profile.email,
     whatsappNumber: profile.whatsapp_number || undefined,
-    rollNumber: profile.roll_number || undefined,
     avatar: profile.avatar_url || undefined,
     institute: profile.institute,
     department: profile.department,

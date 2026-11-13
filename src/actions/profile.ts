@@ -33,7 +33,6 @@ export async function updateProfileAction(
   const {
     fullName,
     whatsappNumber,
-    rollNumber,
     bio,
     institute,
     department,
@@ -54,7 +53,6 @@ export async function updateProfileAction(
     .update({
       full_name: fullName,
       whatsapp_number: whatsappNumber ? whatsappNumber.trim() : null,
-      roll_number: rollNumber ? rollNumber.trim().toUpperCase() : null,
       bio: bio || null,
       institute,
       department,

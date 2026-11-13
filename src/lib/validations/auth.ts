@@ -52,7 +52,6 @@ export const resetPasswordSchema = z.object({
 export const updateProfileSchema = z.object({
   fullName: z.string().min(3).max(100),
   whatsappNumber: z.string().max(20).optional().nullable(),
-  rollNumber: z.string().max(20).optional().nullable(),
   bio: z.string().max(500).optional().nullable(),
   institute: z.enum(INSTITUTES),
   department: z.enum(DEPARTMENTS),
