@@ -32,6 +32,7 @@ export async function updateProfileAction(
   // Calculate profile completion score
   const {
     fullName,
+    whatsappNumber,
     rollNumber,
     bio,
     institute,
@@ -52,6 +53,7 @@ export async function updateProfileAction(
     .from("profiles")
     .update({
       full_name: fullName,
+      whatsapp_number: whatsappNumber ? whatsappNumber.trim() : null,
       roll_number: rollNumber ? rollNumber.trim().toUpperCase() : null,
       bio: bio || null,
       institute,

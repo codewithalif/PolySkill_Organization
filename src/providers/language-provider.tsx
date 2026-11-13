@@ -16,7 +16,18 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const emptySubscribe = () => () => {};
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("en");
+  const [language, setLanguageState] = useState<Language>(() => {
+    if (typeof window === "undefined") return "en";
+    try {
+      const saved = localStorage.getItem("polyskill_lang") as Language | null;
+      if (saved === "en" || saved === "bn") {
+        return saved;
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+    return "en";
+  });
   
   const isMounted = useSyncExternalStore(
     emptySubscribe,
@@ -26,15 +37,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("polyskill_lang") as Language | null;
-      if (saved === "en" || saved === "bn") {
-        setLanguageState(saved);
-        document.documentElement.lang = saved;
-      }
+      document.documentElement.lang = language;
     } catch {
-      // Ignore localStorage errors
+      // Ignore
     }
-  }, []);
+  }, [language]);
 
   const setLanguage = (newLang: Language) => {
     setLanguageState(newLang);

@@ -168,7 +168,7 @@ export function MessagesClient({
               id: student.id,
               full_name: student.full_name,
               username: student.username,
-              roll_number: student.roll_number,
+              whatsapp_number: student.whatsapp_number,
               avatar_url: student.avatar_url,
               institute: student.institute,
             },
@@ -243,20 +243,20 @@ export function MessagesClient({
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Direct Messages</h1>
           <p className="text-muted-foreground text-sm">
-            Chat in real-time with polytechnic peers. Search friends by their Board Roll Number.
+            Chat in real-time with polytechnic peers. Search friends by name, username, or WhatsApp.
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[680px] border rounded-xl overflow-hidden bg-card text-card-foreground shadow-sm">
-        {/* Left: Conversations List & Roll Search */}
+        {/* Left: Conversations List & Search */}
         <div className="border-r flex flex-col h-full bg-muted/15">
-          {/* Roll Number Search Bar */}
+          {/* Search Bar */}
           <div className="p-3 border-b bg-background/50 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                 <UserPlus className="h-3.5 w-3.5 text-primary" />
-                Find Friend by Roll Number
+                Find Student / Friend
               </span>
               {hasSearched && (
                 <button
@@ -272,7 +272,7 @@ export function MessagesClient({
             <form onSubmit={handleSearch} className="flex gap-1.5">
               <div className="relative flex-1">
                 <Input
-                  placeholder="Enter Roll (e.g. 612345)..."
+                  placeholder="Search by name, username, or WhatsApp..."
                   value={rollQuery}
                   onChange={(e) => {
                     setRollQuery(e.target.value);
@@ -281,7 +281,7 @@ export function MessagesClient({
                       setHasSearched(false);
                     }
                   }}
-                  className="h-8 text-xs font-mono uppercase pl-2 pr-7"
+                  className="h-8 text-xs pl-2 pr-7"
                 />
                 {rollQuery && (
                   <button
@@ -313,7 +313,7 @@ export function MessagesClient({
                 {searchResults.length === 0 ? (
                   <div className="text-center py-3 text-muted-foreground">
                     <p className="font-medium">No student found</p>
-                    <p className="text-[10px] mt-0.5">Check the roll number or explore students</p>
+                    <p className="text-[10px] mt-0.5">Try searching with a different name or WhatsApp</p>
                   </div>
                 ) : (
                   searchResults.map((student) => (
@@ -331,12 +331,13 @@ export function MessagesClient({
                         <div className="min-w-0">
                           <div className="font-semibold truncate text-xs">{student.full_name}</div>
                           <div className="text-[10px] text-muted-foreground truncate flex items-center gap-1">
-                            {student.roll_number && (
-                              <span className="font-mono font-medium text-cyan-600 dark:text-cyan-400">
-                                Roll: {student.roll_number}
+                            {student.username && (
+                              <span className="font-mono font-medium text-primary">
+                                @{student.username}
                               </span>
                             )}
-                            <span>• {student.institute}</span>
+                            {student.username && <span>•</span>}
+                            <span>{student.institute}</span>
                           </div>
                         </div>
                       </div>
@@ -377,14 +378,13 @@ export function MessagesClient({
                 <MessageSquare className="h-8 w-8 mx-auto opacity-30" />
                 <p>No active conversations yet.</p>
                 <p className="text-[11px] text-muted-foreground/80">
-                  Search above by your friend's <strong>Board Roll Number</strong> to start messaging!
+                  Search above by name, username, or WhatsApp to start messaging!
                 </p>
               </div>
             ) : (
               conversations.map((conv) => {
                 const isSelected = conv.id === selectedConvId;
                 const name = conv.other_user?.full_name || "Student";
-                const roll = conv.other_user?.roll_number;
                 const initials = name
                   .split(" ")
                   .map((n) => n[0])
@@ -414,12 +414,12 @@ export function MessagesClient({
                         )}
                       </div>
                       <div className="flex items-center gap-1.5 mt-0.5 text-[11px]">
-                        {roll && (
-                          <span className="font-mono text-cyan-600 dark:text-cyan-400 font-medium">
-                            Roll: {roll}
+                        {conv.other_user?.username && (
+                          <span className="font-mono text-primary font-medium">
+                            @{conv.other_user.username}
                           </span>
                         )}
-                        {roll && <span className="text-muted-foreground">•</span>}
+                        {conv.other_user?.username && <span className="text-muted-foreground">•</span>}
                         <span className="text-muted-foreground truncate">
                           {conv.other_user?.institute || "Polytechnic"}
                         </span>
@@ -453,12 +453,12 @@ export function MessagesClient({
                       <span className="font-semibold text-sm truncate">
                         {selectedConv.other_user?.full_name}
                       </span>
-                      {selectedConv.other_user?.roll_number && (
+                      {selectedConv.other_user?.username && (
                         <Badge
                           variant="outline"
-                          className="text-[10px] font-mono border-cyan-500/40 text-cyan-600 dark:text-cyan-300 bg-cyan-500/10"
+                          className="text-[10px] font-mono text-muted-foreground"
                         >
-                          Roll: {selectedConv.other_user.roll_number}
+                          @{selectedConv.other_user.username}
                         </Badge>
                       )}
                     </div>

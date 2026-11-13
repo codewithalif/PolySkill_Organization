@@ -12,11 +12,11 @@ export const registerSchema = z.object({
     .min(8, "Password must be at least 8 characters")
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
     .regex(/[0-9]/, "Password must contain at least one number"),
-  rollNumber: z
+  whatsappNumber: z
     .string()
-    .min(4, "Roll number must be at least 4 digits/characters")
-    .max(20, "Roll number cannot exceed 20 characters")
-    .regex(/^[0-9A-Za-z-]+$/, "Roll number can only contain digits, letters, or hyphens"),
+    .min(10, "WhatsApp number must be at least 10 digits")
+    .max(20, "WhatsApp number cannot exceed 20 characters")
+    .regex(/^[0-9+\s-]+$/, "Please enter a valid WhatsApp phone number"),
   institute: z.enum(INSTITUTES, {
     message: "Please select a valid institute",
   }),
@@ -51,6 +51,7 @@ export const resetPasswordSchema = z.object({
 
 export const updateProfileSchema = z.object({
   fullName: z.string().min(3).max(100),
+  whatsappNumber: z.string().max(20).optional().nullable(),
   rollNumber: z.string().max(20).optional().nullable(),
   bio: z.string().max(500).optional().nullable(),
   institute: z.enum(INSTITUTES),

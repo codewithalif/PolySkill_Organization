@@ -30,6 +30,7 @@ interface ProfileFormProps {
     fullName: string;
     username: string;
     email: string;
+    whatsappNumber?: string;
     rollNumber?: string;
     avatar?: string;
     institute: string;
@@ -46,6 +47,7 @@ interface ProfileFormProps {
 export function ProfileForm({ initialProfile }: ProfileFormProps) {
   const [formData, setFormData] = useState({
     fullName: initialProfile.fullName,
+    whatsappNumber: initialProfile.whatsappNumber || "",
     rollNumber: initialProfile.rollNumber || "",
     bio: initialProfile.bio || "",
     institute: initialProfile.institute,
@@ -191,12 +193,13 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="rollNumber">Board Roll / Roll No</Label>
+              <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
               <Input
-                id="rollNumber"
-                placeholder="e.g. 612345"
-                value={formData.rollNumber}
-                onChange={(e) => setFormData({ ...formData, rollNumber: e.target.value.toUpperCase() })}
+                id="whatsappNumber"
+                type="tel"
+                placeholder="e.g. 01712345678"
+                value={formData.whatsappNumber}
+                onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
               />
             </div>
             <div className="space-y-2">

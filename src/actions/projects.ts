@@ -515,3 +515,49 @@ export async function getMyProjectsAction(): Promise<
 
   return { success: true, data: projects };
 }
+
+/** Fetch all public projects for a specific user */
+export async function getUserProjectsAction(
+  userId: string
+): Promise<ActionResult<ProjectWithMeta[]>> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("projects")
+    .select(
+      `
+      *,
+      author:profiles!projects_created_by_fkey(id, full_name, username, avatar_url),
+      project_likes(count),
+      project_bookmarks(count)
+    `
+    )
+    .eq("created_by", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) return { success: false, message: error.message };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const projects: ProjectWithMeta[] = (data ?? []).map((p: any) => ({
+    id: p.id,
+    title: p.title,
+    description: p.description,
+    thumbnail_url: p.thumbnail_url,
+    tech_stack: p.tech_stack,
+    github_url: p.github_url,
+    live_url: p.live_url,
+    category: p.category,
+    status: p.status,
+    created_by: p.created_by,
+    team_id: p.team_id,
+    created_at: p.created_at,
+    updated_at: p.updated_at,
+    author: p.author ?? null,
+    like_count: p.project_likes?.[0]?.count ?? 0,
+    bookmark_count: p.project_bookmarks?.[0]?.count ?? 0,
+    is_liked: false,
+    is_bookmarked: false,
+  }));
+
+  return { success: true, data: projects };
+}

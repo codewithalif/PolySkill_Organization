@@ -37,7 +37,7 @@ export async function registerAction(
     };
   }
 
-  const { fullName, email, password, rollNumber, institute, department, semester } =
+  const { fullName, email, password, whatsappNumber, institute, department, semester } =
     validation.data;
 
   const supabase = await createClient();
@@ -48,7 +48,7 @@ export async function registerAction(
     options: {
       data: {
         full_name: fullName,
-        roll_number: rollNumber.trim().toUpperCase(),
+        whatsapp_number: whatsappNumber.trim(),
         institute,
         department,
         semester,
@@ -223,6 +223,7 @@ export async function getCurrentUser() {
     fullName: profile.full_name,
     username: profile.username,
     email: profile.email,
+    whatsappNumber: profile.whatsapp_number || undefined,
     rollNumber: profile.roll_number || undefined,
     avatar: profile.avatar_url || undefined,
     institute: profile.institute,

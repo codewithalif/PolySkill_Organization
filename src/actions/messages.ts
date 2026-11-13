@@ -13,7 +13,7 @@ export interface ConversationWithDetails {
     id: string;
     full_name: string;
     username: string;
-    roll_number?: string | null;
+    whatsapp_number?: string | null;
     avatar_url: string | null;
     institute: string;
   } | null;
@@ -29,7 +29,8 @@ export interface SearchedStudent {
   id: string;
   full_name: string;
   username: string;
-  roll_number: string | null;
+  whatsapp_number?: string | null;
+  roll_number?: string | null;
   avatar_url: string | null;
   institute: string;
   department: string;
@@ -83,7 +84,7 @@ export async function getConversationsAction(): Promise<
     // 2. Get other members for these conversations
     const { data: otherMembers } = await supabase
       .from("conversation_members")
-      .select("conversation_id, user:profiles(id, full_name, username, avatar_url, institute, roll_number)")
+      .select("conversation_id, user:profiles(id, full_name, username, avatar_url, institute, whatsapp_number)")
       .in("conversation_id", conversationIds)
       .neq("user_id", user.id);
 
@@ -167,13 +168,12 @@ export async function searchStudentByRollAction(
       return { success: false, message: "Authentication required", data: [] };
     }
 
-    // Search by roll number first, or matching full_name / username, excluding current user
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, full_name, username, roll_number, avatar_url, institute, department, semester")
+      .select("id, full_name, username, whatsapp_number, roll_number, avatar_url, institute, department, semester")
       .neq("id", user.id)
       .or(
-        `roll_number.ilike.%${trimmed}%,username.ilike.%${trimmed}%,full_name.ilike.%${trimmed}%`
+        `username.ilike.%${trimmed}%,full_name.ilike.%${trimmed}%,whatsapp_number.ilike.%${trimmed}%`
       )
       .limit(10);
 

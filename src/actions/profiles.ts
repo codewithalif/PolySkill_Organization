@@ -8,6 +8,7 @@ type ProfileRow = {
   full_name: string;
   username: string;
   email: string;
+  whatsapp_number: string | null;
   roll_number: string | null;
   avatar_url: string | null;
   institute: string;
@@ -81,7 +82,7 @@ export async function searchStudentsAction(
 
   if (query) {
     profileQuery = profileQuery.or(
-      `full_name.ilike.%${query}%,username.ilike.%${query}%,roll_number.ilike.%${query}%,bio.ilike.%${query}%`
+      `full_name.ilike.%${query}%,username.ilike.%${query}%,whatsapp_number.ilike.%${query}%,bio.ilike.%${query}%`
     );
   }
   if (filters?.institute) {

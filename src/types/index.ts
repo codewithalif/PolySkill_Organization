@@ -6,6 +6,7 @@ export interface User {
   fullName: string;
   username: string;
   email: string;
+  whatsappNumber?: string;
   rollNumber?: string;
   avatar?: string;
   institute: string;
@@ -36,7 +37,7 @@ export interface RegisterData {
   fullName: string;
   email: string;
   password: string;
-  rollNumber: string;
+  whatsappNumber: string;
   institute: string;
   department: string;
   semester: string;

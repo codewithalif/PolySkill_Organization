@@ -26,7 +26,7 @@ export function StudentsAdminClient({ initialStudents, currentUserId }: Students
       s.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       s.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       s.institute?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.roll_number?.toLowerCase().includes(searchTerm.toLowerCase())
+      s.whatsapp_number?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   async function handleToggleRole(studentId: string, currentRole: string) {
@@ -118,9 +118,9 @@ export function StudentsAdminClient({ initialStudents, currentUserId }: Students
                           <span className="font-semibold text-sm">
                             {student.full_name}
                           </span>
-                          {student.roll_number && (
-                            <Badge variant="outline" className="text-[10px] font-mono border-cyan-500/30 text-cyan-500 bg-cyan-500/10">
-                              Roll: {student.roll_number}
+                          {student.whatsapp_number && (
+                            <Badge variant="outline" className="text-[10px] font-mono border-emerald-500/30 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10">
+                              WA: {student.whatsapp_number}
                             </Badge>
                           )}
                           {isAdmin ? (

@@ -11,10 +11,8 @@ import {
   PlayCircle,
   CheckCircle2,
   Lock,
-  ArrowRight,
   ArrowLeft,
   Clock,
-  Sparkles,
   ExternalLink,
   Loader2,
 } from "lucide-react";

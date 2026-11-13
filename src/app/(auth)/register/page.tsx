@@ -22,7 +22,7 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rollNumber, setRollNumber] = useState("");
+  const [whatsappNumber, setWhatsappNumber] = useState("");
   const [institute, setInstitute] = useState<(typeof INSTITUTES)[number]>(INSTITUTES[0]);
   const [department, setDepartment] = useState<(typeof DEPARTMENTS)[number]>(DEPARTMENTS[0]);
   const [semester, setSemester] = useState<(typeof SEMESTERS)[number]>(SEMESTERS[0]);
@@ -43,7 +43,7 @@ export default function RegisterPage() {
         fullName,
         email,
         password,
-        rollNumber,
+        whatsappNumber,
         institute,
         department,
         semester,
@@ -138,19 +138,20 @@ export default function RegisterPage() {
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label htmlFor="rollNumber">Board Roll / Student Roll</Label>
-              <span className="text-[11px] text-muted-foreground">For verification & peer search</span>
+              <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
+              <span className="text-[11px] text-muted-foreground">For direct contact & collaboration</span>
             </div>
             <Input
-              id="rollNumber"
-              placeholder="e.g. 612345"
+              id="whatsappNumber"
+              type="tel"
+              placeholder="e.g. 01712345678"
               required
-              value={rollNumber}
-              onChange={(e) => setRollNumber(e.target.value.toUpperCase())}
+              value={whatsappNumber}
+              onChange={(e) => setWhatsappNumber(e.target.value)}
               disabled={isLoading}
             />
-            {fieldErrors.rollNumber && (
-              <p className="text-xs text-destructive">{fieldErrors.rollNumber[0]}</p>
+            {fieldErrors.whatsappNumber && (
+              <p className="text-xs text-destructive">{fieldErrors.whatsappNumber[0]}</p>
             )}
           </div>
 

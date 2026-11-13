@@ -4,6 +4,25 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 const emptySubscribe = () => () => {};
 
+function subscribeFinePointer(callback: () => void) {
+  if (typeof window === "undefined") return () => {};
+  const m1 = window.matchMedia("(pointer: fine)");
+  const m2 = window.matchMedia("(prefers-reduced-motion: reduce)");
+  m1.addEventListener("change", callback);
+  m2.addEventListener("change", callback);
+  return () => {
+    m1.removeEventListener("change", callback);
+    m2.removeEventListener("change", callback);
+  };
+}
+
+function getFinePointerSnapshot() {
+  if (typeof window === "undefined") return false;
+  const finePointer = window.matchMedia("(pointer: fine)").matches;
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return finePointer && !prefersReducedMotion;
+}
+
 export function CursorFollower() {
   const isMounted = useSyncExternalStore(
     emptySubscribe,
@@ -11,7 +30,12 @@ export function CursorFollower() {
     () => false
   );
 
-  const [isEnabled, setIsEnabled] = useState(false);
+  const isEnabled = useSyncExternalStore(
+    subscribeFinePointer,
+    getFinePointerSnapshot,
+    () => false
+  );
+
   const [isHovered, setIsHovered] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -24,25 +48,14 @@ export function CursorFollower() {
   const animationFrameId = useRef<number | null>(null);
 
   useEffect(() => {
-    // Only run on desktop/devices with a fine pointer (mouse), NOT mobile touch
-    const finePointer = window.matchMedia("(pointer: fine)").matches;
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (!finePointer || prefersReducedMotion) {
+    if (!isEnabled) {
       return;
     }
-
-    setIsEnabled(true);
 
     const onMouseMove = (e: MouseEvent) => {
       mousePos.current.x = e.clientX;
       mousePos.current.y = e.clientY;
-
-      if (!isVisible) {
-        setIsVisible(true);
-      }
+      setIsVisible(true);
 
       // Directly update inner dot for instant response
       if (dotRef.current) {
@@ -105,7 +118,7 @@ export function CursorFollower() {
         cancelAnimationFrame(animationFrameId.current);
       }
     };
-  }, [isVisible]);
+  }, [isEnabled]);
 
   if (!isMounted || !isEnabled) {
     return null;

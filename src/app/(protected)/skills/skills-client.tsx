@@ -206,7 +206,7 @@ export function SkillsClient({ initialSkills }: SkillsClientProps) {
 
                 {skill.learningGoal && (
                   <p className="text-xs text-muted-foreground line-clamp-2 italic">
-                    "{skill.learningGoal}"
+                    &ldquo;{skill.learningGoal}&rdquo;
                   </p>
                 )}
 
