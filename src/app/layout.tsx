@@ -37,14 +37,14 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <Script
-        id="splash-check"
-        strategy="beforeInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `try{if(sessionStorage.getItem('polyskill_welcome_seen')){document.documentElement.classList.add('splash-dismissed')}}catch(e){}`,
-        }}
-      />
       <body className="min-h-full flex flex-col relative" suppressHydrationWarning>
+        <Script
+          id="splash-check"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `try{if(sessionStorage.getItem('polyskill_welcome_seen')){document.documentElement.classList.add('splash-dismissed')}}catch(e){}`,
+          }}
+        />
         <AppProviders>
           <AnimatedBackground />
           <CursorFollower />
