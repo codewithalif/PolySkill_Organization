@@ -75,43 +75,13 @@
 
 ---
 
-## 🚀 Getting Started (Local Setup)
 
-Follow these steps to run **PolySkill** locally on your machine:
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/codewithalif/PolySkill_Organization.git
-cd PolySkill_Organization
-```
-
-### 2. Install Dependencies
-```bash
-# Install frontend & backend dependencies
-npm install
-```
-
-### 3. Configure Environment Variables
-Create a `.env` or `.env.local` file in the root directory and add the required credentials:
-```env
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-CLERK_SECRET_KEY=your_clerk_secret_key
-GITHUB_TOKEN=your_github_api_token
-```
-
-### 4. Run the Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are always welcome! Feel free to check the [issues page](https://github.com/codewithalif/PolySkill_Organization/issues) or submit a pull request.
+
 
 ---
 
