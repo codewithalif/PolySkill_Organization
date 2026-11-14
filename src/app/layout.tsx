@@ -5,6 +5,7 @@ import { AppProviders } from "@/providers/app-providers";
 import { WelcomeSplash } from "@/components/shared/welcome-splash";
 import { AnimatedBackground } from "@/components/shared/animated-background";
 import { CursorFollower } from "@/components/shared/cursor-follower";
+import { ModernScrollExperience } from "@/components/shared/modern-scroll";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -55,6 +56,7 @@ export default function RootLayout({
         <AppProviders>
           <AnimatedBackground />
           <CursorFollower />
+          <ModernScrollExperience />
           <WelcomeSplash />
           {children}
         </AppProviders>
