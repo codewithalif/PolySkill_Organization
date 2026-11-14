@@ -24,6 +24,13 @@ export const metadata: Metadata = {
   },
   description:
     "One platform for polytechnic students to learn, collaborate, showcase projects, and grow together.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" },
+    ],
+    apple: "/apple-icon.svg",
+  },
 };
 
 export default function RootLayout({

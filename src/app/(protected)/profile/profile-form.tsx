@@ -46,6 +46,7 @@ interface ProfileFormProps {
 export function ProfileForm({ initialProfile }: ProfileFormProps) {
   const [formData, setFormData] = useState({
     fullName: initialProfile.fullName,
+    username: initialProfile.username || "",
     whatsappNumber: initialProfile.whatsappNumber || "",
     bio: initialProfile.bio || "",
     institute: initialProfile.institute,
@@ -101,6 +102,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
     try {
       const res = await updateProfileAction({
         fullName: formData.fullName,
+        username: formData.username.trim().toLowerCase(),
         whatsappNumber: formData.whatsappNumber ? formData.whatsappNumber.trim() : undefined,
         bio: formData.bio || undefined,
         institute: formData.institute as any,
@@ -203,7 +205,29 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
-              <Input id="username" value={initialProfile.username} disabled />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-mono select-none">
+                  @
+                </span>
+                <Input
+                  id="username"
+                  value={formData.username}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""),
+                    })
+                  }
+                  className="pl-7 font-mono text-sm"
+                  placeholder="your_username"
+                  required
+                  minLength={3}
+                  maxLength={30}
+                />
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Public profile: <span className="font-mono text-primary font-medium">/explore/students/{formData.username || "username"}</span>
+              </p>
             </div>
           </div>
 

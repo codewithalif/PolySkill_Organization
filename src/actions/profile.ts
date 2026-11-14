@@ -32,6 +32,7 @@ export async function updateProfileAction(
   // Calculate profile completion score
   const {
     fullName,
+    username,
     whatsappNumber,
     bio,
     institute,
@@ -43,6 +44,24 @@ export async function updateProfileAction(
     linkedinUrl,
   } = validation.data;
 
+  // Check if username is already taken by another user
+  if (username) {
+    const { data: existingUser } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("username", username)
+      .neq("id", user.id)
+      .maybeSingle();
+
+    if (existingUser) {
+      return {
+        success: false,
+        message: `The username "@${username}" is already taken. Please choose another username.`,
+        errors: { username: ["Username is already taken"] },
+      };
+    }
+  }
+
   let completion = 50; // base info
   if (bio && bio.length > 10) completion += 15;
   if (githubUrl) completion += 15;
@@ -52,6 +71,7 @@ export async function updateProfileAction(
     .from("profiles")
     .update({
       full_name: fullName,
+      username: username,
       whatsapp_number: whatsappNumber ? whatsappNumber.trim() : null,
       bio: bio || null,
       institute,
@@ -73,6 +93,7 @@ export async function updateProfileAction(
         .from("profiles")
         .update({
           full_name: fullName,
+          username: username,
           bio: bio || null,
           institute,
           department,
@@ -88,6 +109,8 @@ export async function updateProfileAction(
 
       revalidatePath("/profile");
       revalidatePath("/dashboard");
+      revalidatePath("/explore/students");
+      if (username) revalidatePath(`/explore/students/${username}`);
 
       return {
         success: false,

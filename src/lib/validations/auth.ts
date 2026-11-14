@@ -51,6 +51,12 @@ export const resetPasswordSchema = z.object({
 
 export const updateProfileSchema = z.object({
   fullName: z.string().min(3).max(100),
+  username: z
+    .string()
+    .min(3, "Username must be at least 3 characters")
+    .max(30, "Username cannot exceed 30 characters")
+    .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores")
+    .transform((val) => val.toLowerCase().trim()),
   whatsappNumber: z.string().max(20).optional().nullable(),
   bio: z.string().max(500).optional().nullable(),
   institute: z.enum(INSTITUTES),
