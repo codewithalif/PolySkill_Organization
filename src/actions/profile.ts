@@ -42,6 +42,8 @@ export async function updateProfileAction(
     githubUrl,
     portfolioUrl,
     linkedinUrl,
+    facebookUrl,
+    instagramUrl,
   } = validation.data;
 
   // Check if username is already taken by another user
@@ -63,9 +65,10 @@ export async function updateProfileAction(
   }
 
   let completion = 50; // base info
-  if (bio && bio.length > 10) completion += 15;
-  if (githubUrl) completion += 15;
-  if (portfolioUrl || linkedinUrl) completion += 20;
+  if (bio && bio.length > 10) completion += 10;
+  if (githubUrl) completion += 10;
+  if (portfolioUrl || linkedinUrl) completion += 15;
+  if (facebookUrl || instagramUrl) completion += 15;
 
   const { error } = await supabase
     .from("profiles")
@@ -81,6 +84,8 @@ export async function updateProfileAction(
       github_url: githubUrl || null,
       portfolio_url: portfolioUrl || null,
       linkedin_url: linkedinUrl || null,
+      facebook_url: facebookUrl || null,
+      instagram_url: instagramUrl || null,
       profile_completion: Math.min(100, completion),
       updated_at: new Date().toISOString(),
     })

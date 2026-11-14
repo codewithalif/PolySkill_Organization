@@ -67,6 +67,8 @@ export function AuthProvider({
         githubUrl: data.github_url || undefined,
         portfolioUrl: data.portfolio_url || undefined,
         linkedinUrl: data.linkedin_url || undefined,
+        facebookUrl: data.facebook_url || undefined,
+        instagramUrl: data.instagram_url || undefined,
         experienceLevel: data.experience_level,
         role: data.role,
         profileCompletion: data.profile_completion,

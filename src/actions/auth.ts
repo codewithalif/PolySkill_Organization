@@ -232,6 +232,8 @@ export async function getCurrentUser() {
     githubUrl: profile.github_url || undefined,
     portfolioUrl: profile.portfolio_url || undefined,
     linkedinUrl: profile.linkedin_url || undefined,
+    facebookUrl: profile.facebook_url || undefined,
+    instagramUrl: profile.instagram_url || undefined,
     experienceLevel: profile.experience_level,
     role: profile.role,
     profileCompletion: profile.profile_completion,

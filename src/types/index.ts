@@ -15,6 +15,8 @@ export interface User {
   githubUrl?: string;
   portfolioUrl?: string;
   linkedinUrl?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
   experienceLevel: "Beginner" | "Intermediate" | "Advanced";
   role: "student" | "sub-admin" | "admin";
   profileCompletion: number;

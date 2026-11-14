@@ -17,6 +17,8 @@ type ProfileRow = {
   github_url: string | null;
   portfolio_url: string | null;
   linkedin_url: string | null;
+  facebook_url: string | null;
+  instagram_url: string | null;
   experience_level: "Beginner" | "Intermediate" | "Advanced";
   role: "student" | "sub-admin" | "admin";
   profile_completion: number;

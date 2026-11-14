@@ -66,6 +66,8 @@ export const updateProfileSchema = z.object({
   githubUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   portfolioUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   linkedinUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  facebookUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  instagramUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

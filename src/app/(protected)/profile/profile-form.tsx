@@ -39,6 +39,8 @@ interface ProfileFormProps {
     githubUrl?: string;
     portfolioUrl?: string;
     linkedinUrl?: string;
+    facebookUrl?: string;
+    instagramUrl?: string;
     experienceLevel: "Beginner" | "Intermediate" | "Advanced";
   };
 }
@@ -55,6 +57,8 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
     githubUrl: initialProfile.githubUrl || "",
     portfolioUrl: initialProfile.portfolioUrl || "",
     linkedinUrl: initialProfile.linkedinUrl || "",
+    facebookUrl: initialProfile.facebookUrl || "",
+    instagramUrl: initialProfile.instagramUrl || "",
     experienceLevel: initialProfile.experienceLevel,
   });
 
@@ -111,6 +115,8 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
         githubUrl: formData.githubUrl || undefined,
         portfolioUrl: formData.portfolioUrl || undefined,
         linkedinUrl: formData.linkedinUrl || undefined,
+        facebookUrl: formData.facebookUrl || undefined,
+        instagramUrl: formData.instagramUrl || undefined,
         experienceLevel: formData.experienceLevel,
       });
 
@@ -352,6 +358,26 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
               placeholder="https://linkedin.com/in/your-profile"
               value={formData.linkedinUrl}
               onChange={(e) => setFormData({ ...formData, linkedinUrl: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="facebookUrl">Facebook Profile URL</Label>
+            <Input
+              id="facebookUrl"
+              placeholder="https://facebook.com/your.username"
+              value={formData.facebookUrl}
+              onChange={(e) => setFormData({ ...formData, facebookUrl: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="instagramUrl">Instagram Profile URL</Label>
+            <Input
+              id="instagramUrl"
+              placeholder="https://instagram.com/your_handle"
+              value={formData.instagramUrl}
+              onChange={(e) => setFormData({ ...formData, instagramUrl: e.target.value })}
             />
           </div>
 
