@@ -584,23 +584,27 @@ export async function createAnnouncementAction(input: {
   title: string;
   content: string;
   category: "General" | "Maintenance" | "Event" | "Feature" | "Important";
-}): Promise<ActionResult> {
+}): Promise<ActionResult<any>> {
   try {
     const { supabase, user } = await requireAdmin();
 
-    const { error } = await (supabase.from("announcements" as any) as any).insert({
-      title: input.title.trim(),
-      content: input.content.trim(),
-      category: input.category,
-      created_by: user.id,
-      is_published: true,
-    });
+    const { data, error } = await (supabase.from("announcements" as any) as any)
+      .insert({
+        title: input.title.trim(),
+        content: input.content.trim(),
+        category: input.category,
+        created_by: user.id,
+        is_published: true,
+      })
+      .select("*, author:profiles!announcements_created_by_fkey(full_name, username)")
+      .single();
 
     if (error) return { success: false, message: error.message };
 
     revalidatePath("/admin/announcements");
+    revalidatePath("/dashboard");
     revalidatePath("/");
-    return { success: true, message: "Announcement published" };
+    return { success: true, message: "Announcement published successfully", data };
   } catch (err: any) {
     return { success: false, message: err.message };
   }
@@ -610,11 +614,15 @@ export async function deleteAnnouncementAction(id: string): Promise<ActionResult
   try {
     const { supabase } = await requireAdmin();
 
-    const { error } = await (supabase.from("announcements" as any) as any).delete().eq("id", id);
+    const { error } = await (supabase.from("announcements" as any) as any)
+      .delete()
+      .eq("id", id);
     if (error) return { success: false, message: error.message };
 
     revalidatePath("/admin/announcements");
-    return { success: true, message: "Announcement deleted" };
+    revalidatePath("/dashboard");
+    revalidatePath("/");
+    return { success: true, message: "Announcement removed successfully" };
   } catch (err: any) {
     return { success: false, message: err.message };
   }

@@ -1,14 +1,15 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getCurrentUser } from "@/actions/auth";
 
 export const instant = false;
 
-
+import { getCurrentUser } from "@/actions/auth";
 import { getStudentSkillsAction } from "@/actions/skills";
 import { getMyProjectsAction } from "@/actions/projects";
 import { getMyTeamsAction } from "@/actions/teams";
 import { getMyInvitationsAction } from "@/actions/invitations";
+import { getActiveAnnouncementsAction } from "@/actions/announcements";
+import { DashboardAnnouncements } from "@/components/shared/dashboard-announcements";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -34,17 +35,19 @@ export default async function DashboardPage() {
   if (!user) redirect("/login");
 
   // Fetch real data in parallel
-  const [skillsRes, projectsRes, teamsRes, invitationsRes] = await Promise.all([
+  const [skillsRes, projectsRes, teamsRes, invitationsRes, announcementsRes] = await Promise.all([
     getStudentSkillsAction(user.id),
     getMyProjectsAction(),
     getMyTeamsAction(),
     getMyInvitationsAction(),
+    getActiveAnnouncementsAction(),
   ]);
 
   const skills = skillsRes.success && skillsRes.data ? skillsRes.data : [];
   const projects = projectsRes.success && projectsRes.data ? projectsRes.data : [];
   const teams = teamsRes.success && teamsRes.data ? teamsRes.data : [];
   const invitations = invitationsRes.success && invitationsRes.data ? invitationsRes.data : [];
+  const announcements = announcementsRes.success && announcementsRes.data ? announcementsRes.data : [];
 
   const stats = [
     {
@@ -127,6 +130,9 @@ export default async function DashboardPage() {
           <Progress value={user.profileCompletion} className="mt-4 h-2" />
         </CardContent>
       </Card>
+
+      {/* Announcements */}
+      <DashboardAnnouncements initialAnnouncements={announcements} />
 
       {/* Stats Cards Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

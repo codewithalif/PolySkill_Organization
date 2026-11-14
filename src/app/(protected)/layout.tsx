@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import Link from "next/link";
-import { getCurrentUser } from "@/actions/auth";
 
 export const instant = false;
 
-
-import { logoutAction } from "@/actions/auth";
+import { logoutAction, getCurrentUser } from "@/actions/auth";
+import { getActiveAnnouncementsAction } from "@/actions/announcements";
+import { AnnouncementBanner } from "@/components/shared/announcement-banner";
 import { AuthProvider } from "@/providers/auth-provider";
 import { STUDENT_NAV_LINKS, ADMIN_NAV_LINKS } from "@/lib/constants";
 import { SidebarLink } from "./components/sidebar-link";
@@ -139,11 +139,16 @@ export default async function ProtectedLayout({
   children: React.ReactNode;
 }) {
   await connection();
-  const user = await getCurrentUser();
+  const [user, announcementsRes] = await Promise.all([
+    getCurrentUser(),
+    getActiveAnnouncementsAction(),
+  ]);
 
   if (!user) {
     redirect("/login");
   }
+
+  const initialAnnouncements = announcementsRes.success && announcementsRes.data ? announcementsRes.data : [];
 
   const userForNav = {
     fullName: user.fullName,
@@ -194,6 +199,7 @@ export default async function ProtectedLayout({
           </header>
 
           <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+            <AnnouncementBanner initialAnnouncements={initialAnnouncements} />
             {children}
           </main>
         </div>

@@ -1,7 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { createAnnouncementAction, deleteAnnouncementAction } from "@/actions/admin";
+import { useState, useEffect } from "react";
+import {
+  createAnnouncementAction,
+  deleteAnnouncementAction,
+  getAdminAnnouncementsAction,
+} from "@/actions/admin";
+import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,8 +20,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Megaphone, Trash2, Send, Loader2 } from "lucide-react";
+import { Megaphone, Trash2, Send, Loader2, Radio, AlertTriangle } from "lucide-react";
 
 interface AnnouncementsClientProps {
   initialAnnouncements: any[];
@@ -33,6 +46,41 @@ export function AnnouncementsAdminClient({
   const [category, setCategory] = useState<(typeof CATEGORIES)[number]>("General");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
+
+  // Subscribe to real-time changes
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel("admin-announcements-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "announcements",
+        },
+        async (payload) => {
+          if (payload.eventType === "DELETE") {
+            const deletedId = (payload.old as any)?.id;
+            if (deletedId) {
+              setAnnouncements((prev) => prev.filter((a) => a.id !== deletedId));
+            }
+          } else {
+            // For INSERT and UPDATE, fetch populated rows with author joins
+            const res = await getAdminAnnouncementsAction();
+            if (res.success && res.data) {
+              setAnnouncements(res.data);
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   async function handlePublish(e: React.FormEvent) {
     e.preventDefault();
@@ -48,16 +96,9 @@ export function AnnouncementsAdminClient({
 
       if (res.success) {
         toast.success(res.message);
-        setAnnouncements((prev) => [
-          {
-            id: Math.random().toString(),
-            title,
-            content,
-            category,
-            created_at: new Date().toISOString(),
-          },
-          ...prev,
-        ]);
+        if (res.data) {
+          setAnnouncements((prev) => [res.data, ...prev.filter((a) => a.id !== res.data.id)]);
+        }
         setTitle("");
         setContent("");
       } else {
@@ -70,15 +111,17 @@ export function AnnouncementsAdminClient({
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this announcement?")) return;
+  async function handleConfirmDelete() {
+    if (!deleteTarget) return;
 
+    const id = deleteTarget.id;
     setLoadingId(id);
     try {
       const res = await deleteAnnouncementAction(id);
       if (res.success) {
         toast.success(res.message);
         setAnnouncements((prev) => prev.filter((a) => a.id !== id));
+        setDeleteTarget(null);
       } else {
         toast.error(res.message || "Failed to delete");
       }
@@ -198,9 +241,13 @@ export function AnnouncementsAdminClient({
                       variant="ghost"
                       className="text-destructive hover:text-destructive h-8"
                       disabled={loadingId === item.id}
-                      onClick={() => handleDelete(item.id)}
+                      onClick={() => setDeleteTarget(item)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      {loadingId === item.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
                     </Button>
                   </div>
                 ))}
@@ -209,6 +256,48 @@ export function AnnouncementsAdminClient({
           </CardContent>
         </Card>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-5 w-5" />
+              <DialogTitle>Remove Announcement</DialogTitle>
+            </div>
+            <DialogDescription className="pt-2">
+              Are you sure you want to delete{" "}
+              <strong>&ldquo;{deleteTarget?.title}&rdquo;</strong>?
+              <br />
+              <br />
+              <span className="text-xs text-muted-foreground block">
+                This notice will immediately disappear in real-time from all logged-in students&apos; dashboards and announcement banners.
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteTarget(null)}
+              disabled={loadingId === deleteTarget?.id}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmDelete}
+              disabled={loadingId === deleteTarget?.id}
+            >
+              {loadingId === deleteTarget?.id ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+              ) : (
+                <Trash2 className="h-4 w-4 mr-1" />
+              )}
+              Remove Announcement
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
