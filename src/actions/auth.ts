@@ -64,9 +64,10 @@ export async function registerAction(
     };
   }
 
+  revalidatePath("/", "layout");
   return {
     success: true,
-    message: "Registration successful! Please check your email to verify your account.",
+    message: "Registration successful! You can now log in immediately.",
     data: { email },
   };
 }

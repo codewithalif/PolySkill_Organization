@@ -57,7 +57,7 @@ export default function RegisterPage() {
         toast.error(res.message || "Registration failed.");
       } else {
         setIsSuccess(true);
-        toast.success(res.message || "Account created! Check your email.");
+        toast.success(res.message || "Account created successfully!");
       }
     } catch {
       setErrorMessage("An unexpected error occurred. Please try again.");
@@ -74,11 +74,11 @@ export default function RegisterPage() {
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
             <CheckCircle2 className="h-8 w-8" />
           </div>
-          <CardTitle className="text-xl">Verify your email</CardTitle>
+          <CardTitle className="text-xl">Registration Successful!</CardTitle>
           <CardDescription className="max-w-xs">
-            We have sent a verification link to{" "}
-            <span className="font-semibold text-foreground">{email}</span>.
-            Please click the link in your inbox to activate your PolySkill account.
+            Your PolySkill account for{" "}
+            <span className="font-semibold text-foreground">{email}</span> has been created.
+            No email verification is required. You can log in right away!
           </CardDescription>
           <Button asChild className="w-full mt-4">
             <Link href="/login">Go to Login</Link>
