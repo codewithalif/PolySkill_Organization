@@ -88,35 +88,36 @@ export default function CreateProjectPage() {
   return (
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center gap-2">
-        <Button asChild variant="ghost" size="sm">
+        <Button asChild variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground hover:bg-white/[0.04]">
           <Link href="/projects">
             <ArrowLeft className="mr-1 h-4 w-4" /> Back to Projects
           </Link>
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Create New Project</CardTitle>
-          <CardDescription>
+      <Card className="border-white/[0.08] bg-[#111B2E]/75 backdrop-blur-xl rounded-2xl shadow-2xl">
+        <CardHeader className="pb-4">
+          <CardTitle className="font-heading text-2xl text-foreground">Create New Project</CardTitle>
+          <CardDescription className="text-xs text-muted-foreground">
             Showcase your project, capstone, or assignment to the polytechnic community.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Project Title</Label>
+              <Label htmlFor="title" className="text-xs font-medium">Project Title</Label>
               <Input
                 id="title"
                 placeholder="e.g. Polytechnic Student Attendance System"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
+                className="bg-white/[0.04] border-white/[0.1] focus:border-primary/50 text-foreground text-sm"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description" className="text-xs font-medium">Description</Label>
               <Textarea
                 id="description"
                 rows={4}
@@ -124,22 +125,23 @@ export default function CreateProjectPage() {
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 required
+                className="bg-white/[0.04] border-white/[0.1] focus:border-primary/50 text-foreground text-xs leading-relaxed"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Category</Label>
+                <Label className="text-xs font-medium">Category</Label>
                 <Select
                   value={formData.category}
                   onValueChange={(val) => {
                     if (val) setFormData({ ...formData, category: val as (typeof PROJECT_CATEGORIES)[number] });
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/[0.04] border-white/[0.1] text-foreground text-xs">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-[#111B2E] border-white/[0.1] text-foreground">
                     {PROJECT_CATEGORIES.map((cat) => (
                       <SelectItem key={cat} value={cat}>
                         {cat}
@@ -150,17 +152,17 @@ export default function CreateProjectPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Status</Label>
+                <Label className="text-xs font-medium">Status</Label>
                 <Select
                   value={formData.status}
                   onValueChange={(val) => {
                     if (val) setFormData({ ...formData, status: val as (typeof PROJECT_STATUSES)[number] });
                   }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/[0.04] border-white/[0.1] text-foreground text-xs">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-[#111B2E] border-white/[0.1] text-foreground">
                     {PROJECT_STATUSES.map((st) => (
                       <SelectItem key={st} value={st}>
                         {st}
@@ -172,53 +174,61 @@ export default function CreateProjectPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="techStack">Tech Stack (comma-separated)</Label>
+              <Label htmlFor="techStack" className="text-xs font-medium">Tech Stack (comma-separated)</Label>
               <Input
                 id="techStack"
                 placeholder="Next.js, TypeScript, PostgreSQL, Tailwind CSS"
                 value={formData.techStack}
                 onChange={(e) => setFormData({ ...formData, techStack: e.target.value })}
                 required
+                className="bg-white/[0.04] border-white/[0.1] focus:border-primary/50 text-foreground text-sm"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="githubUrl">GitHub Repository URL (Optional)</Label>
+                <Label htmlFor="githubUrl" className="text-xs font-medium">GitHub Repository URL (Optional)</Label>
                 <Input
                   id="githubUrl"
                   placeholder="https://github.com/username/project"
                   value={formData.githubUrl}
                   onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
+                  className="bg-white/[0.04] border-white/[0.1] focus:border-primary/50 text-foreground text-xs"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="liveUrl">Live Demo URL (Optional)</Label>
+                <Label htmlFor="liveUrl" className="text-xs font-medium">Live Demo URL (Optional)</Label>
                 <Input
                   id="liveUrl"
                   placeholder="https://myproject.vercel.app"
                   value={formData.liveUrl}
                   onChange={(e) => setFormData({ ...formData, liveUrl: e.target.value })}
+                  className="bg-white/[0.04] border-white/[0.1] focus:border-primary/50 text-foreground text-xs"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="thumbnailUrl">Thumbnail Image URL (Optional)</Label>
+              <Label htmlFor="thumbnailUrl" className="text-xs font-medium">Thumbnail Image URL (Optional)</Label>
               <Input
                 id="thumbnailUrl"
                 placeholder="https://images.unsplash.com/..."
                 value={formData.thumbnailUrl}
                 onChange={(e) => setFormData({ ...formData, thumbnailUrl: e.target.value })}
+                className="bg-white/[0.04] border-white/[0.1] focus:border-primary/50 text-foreground text-xs"
               />
             </div>
 
-            <div className="flex justify-end gap-3 pt-4">
-              <Button asChild variant="outline">
+            <div className="flex justify-end gap-3 pt-4 border-t border-white/[0.06]">
+              <Button asChild variant="outline" className="border-white/[0.1] bg-white/[0.03] hover:bg-white/[0.08] text-xs">
                 <Link href="/projects">Cancel</Link>
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-primary hover:bg-primary/90 text-white shadow-[0_0_16px_rgba(120,107,250,0.4)] text-xs"
+              >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Publishing...

@@ -61,24 +61,24 @@ function NavItems({
 }) {
   return (
     <div className="flex h-full flex-col">
-      {/* User Info */}
-      <div className="border-b p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+      {/* User Info Card */}
+      <div className="p-3">
+        <div className="flex items-center gap-3 p-2.5 rounded-xl border border-border/50 bg-card/40 backdrop-blur-sm">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 border border-primary/30 text-xs font-semibold text-primary">
             {user.avatar ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={user.avatar}
                 alt={user.fullName}
-                className="h-9 w-9 rounded-full object-cover"
+                className="h-9 w-9 rounded-xl object-cover"
               />
             ) : (
               user.fullName.charAt(0).toUpperCase()
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">{user.fullName}</p>
-            <p className="truncate text-xs text-muted-foreground">
+            <p className="truncate text-xs font-semibold text-foreground">{user.fullName}</p>
+            <p className="truncate text-[11px] text-muted-foreground">
               {user.email}
             </p>
           </div>
@@ -86,30 +86,30 @@ function NavItems({
       </div>
 
       {/* Nav Links */}
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
         {STUDENT_NAV_LINKS.map((link) => {
           const Icon = ICON_MAP[link.icon];
           return (
             <SidebarLink key={link.href} href={link.href}>
-              {Icon && <Icon className="h-4 w-4 shrink-0" />}
-              {link.label}
+              {Icon && <Icon className="h-4 w-4 shrink-0 transition-transform group-hover:scale-110" />}
+              <span>{link.label}</span>
             </SidebarLink>
           );
         })}
 
         {(user.role === "admin" || user.role === "sub-admin") && (
           <>
-            <div className="pt-3 pb-1 px-3">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {user.role === "admin" ? "Admin" : "Sub-Admin"}
+            <div className="pt-4 pb-1 px-3">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground/80">
+                {user.role === "admin" ? "Admin Controls" : "Sub-Admin"}
               </p>
             </div>
             {ADMIN_NAV_LINKS.map((link) => {
               const Icon = ICON_MAP[link.icon];
               return (
                 <SidebarLink key={link.href} href={link.href}>
-                  {Icon && <Icon className="h-4 w-4 shrink-0" />}
-                  {link.label}
+                  {Icon && <Icon className="h-4 w-4 shrink-0 text-amber-500" />}
+                  <span>{link.label}</span>
                 </SidebarLink>
               );
             })}
@@ -118,15 +118,16 @@ function NavItems({
       </nav>
 
       {/* Logout */}
-      <div className="border-t p-3">
+      <div className="border-t border-border/40 p-3">
         <form action={logoutAction}>
           <Button
             type="submit"
             variant="ghost"
-            className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive"
+            size="sm"
+            className="w-full justify-start gap-2.5 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl"
           >
             <LogOut className="h-4 w-4" />
-            Logout
+            Sign Out
           </Button>
         </form>
       </div>
@@ -163,11 +164,13 @@ export default async function ProtectedLayout({
       <SyncUserSession userId={user.id} />
       <div className="flex min-h-screen bg-background">
         {/* Desktop Sidebar */}
-        <aside className="hidden w-64 shrink-0 border-r lg:flex lg:flex-col">
-          <div className="flex h-14 items-center border-b px-4">
-            <Link href="/" className="flex items-center gap-2 font-heading font-semibold hover:opacity-80 transition-opacity">
-              <Zap className="h-5 w-5 text-primary" />
-              PolySkill
+        <aside className="hidden w-64 shrink-0 border-r border-border/40 bg-card/30 backdrop-blur-xl lg:flex lg:flex-col">
+          <div className="flex h-16 items-center border-b border-border/40 px-5">
+            <Link href="/" className="flex items-center gap-2.5 font-heading font-bold text-lg tracking-tight hover:opacity-90 transition-opacity group">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-[#786BFA] to-[#35C6D8] shadow-[0_0_12px_-2px_rgba(120,107,250,0.5)]">
+                <Zap className="h-4 w-4 text-white" />
+              </div>
+              <span className="text-foreground">PolySkill</span>
             </Link>
           </div>
           <div className="flex flex-1 flex-col overflow-hidden">
@@ -177,30 +180,36 @@ export default async function ProtectedLayout({
 
         {/* Mobile Header + Sheet */}
         <div className="flex flex-1 flex-col min-w-0">
-          <header className="flex h-14 items-center border-b px-4 lg:hidden">
-            <Sheet>
-              <SheetTrigger
-                render={
-                  <Button variant="ghost" size="icon" className="mr-2" />
-                }
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle menu</span>
-              </SheetTrigger>
-              <SheetContent side="left" className="p-0 w-64">
-                <SheetHeader className="sr-only">
-                  <SheetTitle>Navigation</SheetTitle>
-                </SheetHeader>
-                <NavItems user={userForNav} />
-              </SheetContent>
-            </Sheet>
-            <Link href="/" className="flex items-center gap-2 font-heading font-semibold hover:opacity-80 transition-opacity">
-              <Zap className="h-5 w-5 text-primary" />
-              PolySkill
-            </Link>
+          <header className="flex h-14 items-center justify-between border-b border-border/40 bg-card/40 backdrop-blur-xl px-4 lg:hidden">
+            <div className="flex items-center gap-2">
+              <Sheet>
+                <SheetTrigger
+                  render={
+                    <Button variant="ghost" size="icon" className="h-9 w-9" />
+                  }
+                >
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </SheetTrigger>
+                <SheetContent side="left" className="p-0 w-64 border-r border-border/40 bg-card/95 backdrop-blur-2xl">
+                  <SheetHeader className="sr-only">
+                    <SheetTitle>Navigation</SheetTitle>
+                  </SheetHeader>
+                  <NavItems user={userForNav} />
+                </SheetContent>
+              </Sheet>
+              <Link href="/" className="flex items-center gap-2 font-heading font-bold text-base hover:opacity-80 transition-opacity">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-tr from-[#786BFA] to-[#35C6D8]">
+                  <Zap className="h-3.5 w-3.5 text-white" />
+                </div>
+                <span>PolySkill</span>
+              </Link>
+            </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 relative">
+            {/* Ambient Aurora glow inside the workspace */}
+            <div className="absolute top-0 right-1/4 w-[600px] h-[300px] bg-gradient-to-b from-primary/10 via-cyan-500/5 to-transparent blur-3xl pointer-events-none -z-10" />
             <AnnouncementBanner initialAnnouncements={initialAnnouncements} />
             {children}
           </main>

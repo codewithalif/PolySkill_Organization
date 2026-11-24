@@ -52,17 +52,20 @@ export function Footer() {
   ];
 
   return (
-    <footer className="border-t bg-muted/30">
+    <footer className="border-t border-border/40 bg-card/20 backdrop-blur-lg relative overflow-hidden">
+      {/* Subtle Aurora Ambient glow at the footer top */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-gradient-to-r from-primary/10 via-cyan-500/10 to-transparent blur-3xl pointer-events-none -z-10" />
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Main footer */}
         <div className="grid grid-cols-2 gap-8 py-12 md:grid-cols-4">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Sparkles className="h-4 w-4 text-primary-foreground" />
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-[#786BFA] to-[#35C6D8] shadow-[0_0_12px_-2px_rgba(120,107,250,0.5)] transition-transform group-hover:scale-105">
+                <Sparkles className="h-4 w-4 text-white" />
               </div>
-              <span className="text-lg font-bold">{APP_NAME}</span>
+              <span className="font-heading text-lg font-bold tracking-tight text-foreground">{APP_NAME}</span>
             </Link>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
               {t(
@@ -75,16 +78,16 @@ export function Footer() {
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-card/40 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
                 aria-label="GitHub"
               >
-                <GithubIcon className="h-5 w-5" />
+                <GithubIcon className="h-4 w-4" />
               </a>
               <a
                 href="mailto:contact@polyskill.com"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-card/40 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
               >
-                <Mail className="h-5 w-5" />
+                <Mail className="h-4 w-4" />
               </a>
             </div>
           </div>
@@ -92,13 +95,15 @@ export function Footer() {
           {/* Links */}
           {footerCategories.map((cat, idx) => (
             <div key={idx}>
-              <h3 className="text-sm font-semibold">{cat.title}</h3>
-              <ul className="mt-3 space-y-2">
+              <h3 className="font-heading text-sm font-semibold tracking-wide text-foreground uppercase tracking-wider text-xs">
+                {cat.title}
+              </h3>
+              <ul className="mt-3.5 space-y-2.5">
                 {cat.links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors inline-block"
                     >
                       {link.label}
                     </Link>
@@ -109,7 +114,7 @@ export function Footer() {
           ))}
         </div>
 
-        <Separator />
+        <Separator className="opacity-30" />
 
         {/* Bottom bar */}
         <div className="flex flex-col items-center justify-between gap-4 py-6 sm:flex-row">
@@ -124,7 +129,7 @@ export function Footer() {
                   href="https://www.facebook.com/codewithalif"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-foreground hover:text-primary hover:underline transition-colors"
+                  className="font-semibold text-primary hover:underline transition-colors"
                 >
                   Alif
                 </a>{" "}
@@ -137,11 +142,11 @@ export function Footer() {
                   href="https://www.facebook.com/codewithalif"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-foreground hover:text-primary hover:underline transition-colors"
+                  className="font-semibold text-primary hover:underline transition-colors"
                 >
                   Alif_Hosen
                 </a>{" "}
-                
+                🛠
               </>
             )}
           </p>

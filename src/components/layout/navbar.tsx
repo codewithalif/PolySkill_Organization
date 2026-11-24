@@ -66,27 +66,29 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/70 backdrop-blur-xl supports-backdrop-filter:bg-background/60 transition-all">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <Sparkles className="h-4 w-4 text-primary-foreground" />
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-[#786BFA] to-[#35C6D8] shadow-[0_0_16px_-2px_rgba(120,107,250,0.5)] transition-transform group-hover:scale-105">
+            <Sparkles className="h-4 w-4 text-white" />
           </div>
-          <span className="text-xl font-bold tracking-tight">{APP_NAME}</span>
+          <span className="font-heading text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+            {APP_NAME}
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-1.5 md:flex p-1 rounded-full border border-border/50 bg-card/40 backdrop-blur-md">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                "rounded-full px-3.5 py-1.5 text-xs font-medium transition-all",
                 pathname === link.href
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground"
+                  ? "bg-primary/15 text-primary border border-primary/30 shadow-[0_0_12px_-3px_rgba(120,107,250,0.3)]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent/40"
               )}
             >
               {getNavLabel(link.href, link.label)}
@@ -96,10 +98,10 @@ export function Navbar() {
             <Link
               href="/dashboard"
               className={cn(
-                "rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                "rounded-full px-3.5 py-1.5 text-xs font-medium transition-all",
                 pathname === "/dashboard"
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground"
+                  ? "bg-primary/15 text-primary border border-primary/30 shadow-[0_0_12px_-3px_rgba(120,107,250,0.3)]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent/40"
               )}
             >
               {t("nav.dashboard", "Dashboard")}
@@ -117,15 +119,15 @@ export function Navbar() {
               {isAuthenticated && user ? (
                 <div className="flex items-center gap-2">
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="relative h-9 w-9 rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all p-0 flex items-center justify-center outline-none cursor-pointer">
+                    <DropdownMenuTrigger className="relative h-9 w-9 rounded-full ring-2 ring-primary/30 hover:ring-primary/60 transition-all p-0 flex items-center justify-center outline-none cursor-pointer">
                       <Avatar className="h-9 w-9">
                         <AvatarImage src={user.avatar} alt={user.fullName} />
-                        <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
+                        <AvatarFallback className="bg-primary/15 text-primary font-semibold text-xs">
                           {getInitials(user.fullName)}
                         </AvatarFallback>
                       </Avatar>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 p-1.5">
+                    <DropdownMenuContent align="end" className="w-56 p-1.5 glass-panel-elevated">
                       <DropdownMenuLabel className="font-normal px-2 py-1.5">
                         <div className="flex flex-col space-y-1">
                           <p className="text-sm font-semibold leading-none">{user.fullName}</p>
@@ -163,7 +165,7 @@ export function Navbar() {
                           render={
                             <Link
                               href="/admin"
-                              className="flex items-center gap-2 cursor-pointer w-full text-amber-600 dark:text-amber-400"
+                              className="flex items-center gap-2 cursor-pointer w-full text-amber-500"
                             />
                           }
                         >
@@ -195,10 +197,10 @@ export function Navbar() {
                 </div>
               ) : (
                 <div className="hidden items-center gap-2 sm:flex">
-                  <Button variant="ghost" size="sm" asChild>
+                  <Button variant="ghost" size="sm" asChild className="rounded-full text-xs">
                     <Link href="/login">{t("nav.signIn", "Log in")}</Link>
                   </Button>
-                  <Button size="sm" asChild>
+                  <Button size="sm" asChild className="rounded-full text-xs bg-gradient-to-r from-primary to-[#6355EE] hover:opacity-90 shadow-[0_0_15px_-3px_rgba(120,107,250,0.4)]">
                     <Link href="/register">{t("nav.register", "Join PolySkill")}</Link>
                   </Button>
                 </div>
@@ -225,88 +227,82 @@ export function Navbar() {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div className="border-t md:hidden">
-          <div className="space-y-1 px-4 py-3">
-            {NAV_LINKS.map((link) => (
+        <div className="border-t border-border/40 md:hidden glass-panel px-4 py-3 space-y-1">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className={cn(
+                "block rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                pathname === link.href
+                  ? "bg-primary/15 text-primary border border-primary/30"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
+              )}
+            >
+              {getNavLabel(link.href, link.label)}
+            </Link>
+          ))}
+          {isAuthenticated ? (
+            <div className="flex flex-col gap-1 pt-2 border-t border-white/[0.06] mt-2">
               <Link
-                key={link.href}
-                href={link.href}
+                href="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
-                className={cn(
-                  "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent",
-                  pathname === link.href
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground"
-                )}
+                className="px-3 py-2 text-sm font-medium rounded-lg hover:bg-white/[0.04] text-foreground"
               >
-                {getNavLabel(link.href, link.label)}
+                {t("nav.dashboard", "Dashboard")}
               </Link>
-            ))}
-
-            {isAuthenticated ? (
-              <div className="flex flex-col gap-1 pt-3 border-t mt-3">
+              <Link
+                href="/profile"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-3 py-2 text-sm font-medium rounded-lg hover:bg-white/[0.04] text-muted-foreground hover:text-foreground"
+              >
+                {t("nav.profile", "My Profile")}
+              </Link>
+              <Link
+                href="/projects"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-3 py-2 text-sm font-medium rounded-lg hover:bg-white/[0.04] text-muted-foreground hover:text-foreground"
+              >
+                {t("nav.myProjects", "My Projects")}
+              </Link>
+              {(user?.role === "admin" || user?.role === "sub-admin") && (
                 <Link
-                  href="/dashboard"
+                  href="/admin"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
+                  className="px-3 py-2 text-sm font-medium rounded-lg text-amber-400 hover:bg-white/[0.04]"
                 >
-                  {t("nav.dashboard", "Dashboard")}
+                  {user?.role === "admin"
+                    ? t("nav.adminPanel", "Admin Panel")
+                    : "Sub-Admin Panel"}
                 </Link>
-                <Link
-                  href="/profile"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
-                >
-                  {t("nav.profile", "My Profile")}
+              )}
+              <Button
+                variant="destructive"
+                size="sm"
+                className="mt-2 text-xs bg-red-600 hover:bg-red-700"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  signOut();
+                }}
+              >
+                {t("nav.signOut", "Log Out")}
+              </Button>
+            </div>
+          ) : (
+            <div className="pt-2 border-t border-white/[0.06] flex flex-col gap-2">
+              <Button variant="outline" size="sm" asChild className="w-full border-white/[0.1] bg-white/[0.02]">
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                  {t("nav.signIn", "Log in")}
                 </Link>
-                <Link
-                  href="/projects"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
-                >
-                  {t("nav.myProjects", "My Projects")}
+              </Button>
+              <Button size="sm" asChild className="w-full bg-primary hover:bg-primary/90 text-white shadow-[0_0_14px_rgba(120,107,250,0.4)]">
+                <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
+                  {t("nav.register", "Join PolySkill")}
                 </Link>
-                {(user?.role === "admin" || user?.role === "sub-admin") && (
-                  <Link
-                    href="/admin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="px-3 py-2 text-sm font-medium rounded-md text-amber-600 dark:text-amber-400 hover:bg-accent"
-                  >
-                    {user?.role === "admin"
-                      ? t("nav.adminPanel", "Admin Panel")
-                      : "Sub-Admin Panel"}
-                  </Link>
-                )}
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="mt-2"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    signOut();
-                  }}
-                >
-                  {t("nav.signOut", "Log Out")}
-                </Button>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-2 pt-3 border-t mt-3">
-                <Button variant="ghost" size="sm" asChild className="w-full justify-center">
-                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                    {t("nav.signIn", "Log in")}
-                  </Link>
-                </Button>
-                <Button size="sm" asChild className="w-full justify-center">
-                  <Link
-                    href="/register"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {t("nav.register", "Join PolySkill")}
-                  </Link>
-                </Button>
-              </div>
-            )}
-          </div>
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </header>

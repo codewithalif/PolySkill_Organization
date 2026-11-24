@@ -72,10 +72,10 @@ export default async function ExploreStudentsPage({
   const students = res.success && res.data ? res.data : [];
 
   return (
-    <div className="container max-w-7xl mx-auto py-10 px-4 space-y-8">
+    <div className="container max-w-7xl mx-auto py-12 px-4 sm:px-6 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Explore Students</h1>
-        <p className="text-muted-foreground">
+        <h1 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-foreground">Explore Students</h1>
+        <p className="text-muted-foreground text-sm mt-1">
           Find peers by skill, department, or polytechnic institute for collaboration and project teams.
         </p>
       </div>
@@ -86,18 +86,21 @@ export default async function ExploreStudentsPage({
           name="query"
           placeholder="Search by student name, skill, or bio..."
           defaultValue={query || ""}
+          className="bg-white/[0.04] border-white/[0.08] focus:border-primary/50 text-foreground text-xs h-10 rounded-xl"
         />
-        <Button type="submit">
-          <Search className="h-4 w-4 mr-1" /> Search
+        <Button type="submit" className="h-10 px-4 bg-primary hover:bg-primary/90 text-white shadow-[0_0_14px_rgba(120,107,250,0.4)] rounded-xl text-xs">
+          <Search className="h-4 w-4 mr-1.5" /> Search
         </Button>
       </form>
 
       {students.length === 0 ? (
-        <Card className="text-center py-16">
-          <CardContent className="space-y-4">
-            <GraduationCap className="h-12 w-12 mx-auto text-muted-foreground" />
-            <h3 className="font-semibold text-lg">No students found</h3>
-            <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+        <Card className="text-center py-16 border-white/[0.08] bg-[#111B2E]/50 backdrop-blur-md rounded-2xl">
+          <CardContent className="space-y-4 max-w-sm mx-auto">
+            <div className="h-14 w-14 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mx-auto text-muted-foreground">
+              <GraduationCap className="h-7 w-7 text-primary" />
+            </div>
+            <h3 className="font-heading font-semibold text-lg text-foreground">No students found</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
               {query
                 ? `No students matched "${query}". Try searching another name or skill.`
                 : "No student profiles found."}
@@ -115,56 +118,56 @@ export default async function ExploreStudentsPage({
               .toUpperCase();
 
             return (
-              <Card key={student.id} className="flex flex-col">
+              <Card key={student.id} className="group flex flex-col border border-white/[0.08] bg-[#111B2E]/65 hover:bg-[#111B2E]/90 backdrop-blur-md rounded-2xl transition-all duration-300 hover:border-primary/40 hover:shadow-[0_8px_30px_rgb(0,0,0,0.35)]">
                 <CardHeader className="flex flex-row items-center gap-4 pb-3">
-                  <Avatar className="h-12 w-12">
+                  <Avatar className="h-12 w-12 ring-1 ring-white/10 shrink-0">
                     <AvatarImage src={student.avatar_url || ""} />
-                    <AvatarFallback>{initials}</AvatarFallback>
+                    <AvatarFallback className="bg-primary/20 text-primary font-bold">{initials}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <CardTitle className="text-base truncate">
+                    <CardTitle className="font-heading text-base truncate text-foreground group-hover:text-primary transition-colors">
                       {student.full_name}
                     </CardTitle>
-                    <CardDescription className="text-xs truncate">
+                    <CardDescription className="text-xs truncate font-mono text-muted-foreground">
                       @{student.username}
                     </CardDescription>
                   </div>
-                  <Badge variant="outline">{student.experience_level}</Badge>
+                  <Badge variant="outline" className="text-[10px] font-mono border-white/[0.08] bg-white/[0.03] text-muted-foreground shrink-0">{student.experience_level}</Badge>
                 </CardHeader>
                 <CardContent className="space-y-3 mt-auto">
                   <div className="text-xs text-muted-foreground space-y-0.5">
                     <div className="font-medium text-foreground truncate">
                       {student.institute}
                     </div>
-                    <div className="truncate">
+                    <div className="truncate text-[11px] font-mono">
                       {student.department} ({student.semester})
                     </div>
                   </div>
 
                   {student.bio && (
-                    <p className="text-xs text-muted-foreground line-clamp-2 italic">
+                    <p className="text-xs text-muted-foreground line-clamp-2 italic bg-white/[0.02] border border-white/[0.04] p-2 rounded-lg leading-relaxed">
                       &ldquo;{student.bio}&rdquo;
                     </p>
                   )}
 
                   {student.skills && student.skills.length > 0 && (
-                    <div className="flex flex-wrap gap-1 pt-1">
+                    <div className="flex flex-wrap gap-1.5 pt-1">
                       {student.skills.slice(0, 3).map((s: any) => (
-                        <Badge key={s.name} variant="secondary" className="text-[10px]">
+                        <Badge key={s.name} variant="secondary" className="text-[10px] font-mono bg-white/[0.04] border border-white/[0.06] text-secondary-foreground">
                           {s.name}
                         </Badge>
                       ))}
                     </div>
                   )}
 
-                  <div className="pt-3 border-t flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div className="pt-3 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-2 text-xs">
                     <div className="flex items-center gap-2">
                       {student.github_url && (
                         <a
                           href={student.github_url}
                           target="_blank"
                           rel="noreferrer"
-                          className="hover:text-foreground text-muted-foreground"
+                          className="hover:text-primary text-muted-foreground transition-colors"
                           title="GitHub Profile"
                         >
                           <GithubIcon className="h-4 w-4" />
@@ -175,7 +178,7 @@ export default async function ExploreStudentsPage({
                           href={student.portfolio_url}
                           target="_blank"
                           rel="noreferrer"
-                          className="hover:text-foreground text-muted-foreground"
+                          className="hover:text-primary text-muted-foreground transition-colors"
                           title="Portfolio Website"
                         >
                           <Globe className="h-4 w-4" />
@@ -184,7 +187,7 @@ export default async function ExploreStudentsPage({
                     </div>
 
                     <div className="flex items-center gap-1.5 ml-auto">
-                      <Button asChild size="sm" variant="outline" className="h-8 px-2.5 text-xs">
+                      <Button asChild size="sm" variant="outline" className="h-8 px-2.5 text-xs border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.08]">
                         <Link href={`/explore/students/${student.username}`}>See Profile</Link>
                       </Button>
 
@@ -192,7 +195,7 @@ export default async function ExploreStudentsPage({
                         <Button
                           asChild
                           size="sm"
-                          className="h-8 px-2.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1"
+                          className="h-8 px-2.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1 shadow-[0_0_10px_rgba(66,214,164,0.3)]"
                         >
                           <a
                             href={getWhatsAppUrl(student.whatsapp_number)!}
@@ -208,7 +211,7 @@ export default async function ExploreStudentsPage({
                           size="sm"
                           variant="secondary"
                           disabled
-                          className="h-8 px-2.5 text-xs opacity-50 cursor-not-allowed gap-1"
+                          className="h-8 px-2.5 text-xs opacity-50 cursor-not-allowed gap-1 bg-white/[0.04] text-muted-foreground"
                           title="WhatsApp number not added by student"
                         >
                           <WhatsAppIcon className="h-3.5 w-3.5 fill-current" />

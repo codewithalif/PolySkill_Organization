@@ -52,27 +52,29 @@ export default function SettingsPage() {
   return (
     <div className="max-w-3xl space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Account Settings</h1>
-        <p className="text-muted-foreground">
+        <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground">Account Settings</h1>
+        <p className="text-muted-foreground text-sm mt-1">
           Manage your security preferences and account settings.
         </p>
       </div>
 
       {/* Password Change */}
-      <Card>
-        <CardHeader>
+      <Card className="border-white/[0.08] bg-[#111B2E]/70 backdrop-blur-xl rounded-2xl shadow-xl">
+        <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
-            <KeyRound className="h-5 w-5 text-primary" />
-            <CardTitle>Change Password</CardTitle>
+            <div className="p-2 bg-primary/10 rounded-xl text-primary border border-primary/20">
+              <KeyRound className="h-4 w-4" />
+            </div>
+            <CardTitle className="font-heading text-lg text-foreground">Change Password</CardTitle>
           </div>
-          <CardDescription>
+          <CardDescription className="text-xs text-muted-foreground">
             Update your account password to keep your profile secure.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
-            <div className="space-y-2">
-              <Label htmlFor="newPassword">New Password</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="newPassword" className="text-xs font-medium">New Password</Label>
               <Input
                 id="newPassword"
                 type="password"
@@ -80,11 +82,12 @@ export default function SettingsPage() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
+                className="bg-white/[0.04] border-white/[0.1] focus:border-primary/50 text-foreground text-sm"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="confirmPassword" className="text-xs font-medium">Confirm New Password</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -92,10 +95,15 @@ export default function SettingsPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
+                className="bg-white/[0.04] border-white/[0.1] focus:border-primary/50 text-foreground text-sm"
               />
             </div>
 
-            <Button type="submit" disabled={isUpdating}>
+            <Button
+              type="submit"
+              disabled={isUpdating}
+              className="bg-primary hover:bg-primary/90 text-white shadow-[0_0_16px_rgba(120,107,250,0.4)] text-xs"
+            >
               {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Update Password
             </Button>
@@ -103,30 +111,33 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Separator />
+      <Separator className="bg-white/[0.06]" />
 
       {/* Danger Zone */}
-      <Card className="border-destructive/40">
-        <CardHeader>
+      <Card className="border-red-500/20 bg-red-500/[0.03] backdrop-blur-xl rounded-2xl">
+        <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 text-destructive" />
-            <CardTitle className="text-destructive">Danger Zone</CardTitle>
+            <div className="p-2 bg-red-500/10 rounded-xl text-red-400 border border-red-500/20">
+              <ShieldAlert className="h-4 w-4" />
+            </div>
+            <CardTitle className="font-heading text-lg text-red-400">Danger Zone</CardTitle>
           </div>
-          <CardDescription>
+          <CardDescription className="text-xs text-muted-foreground">
             Actions here are permanent and cannot be undone.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <div className="font-semibold text-sm">Delete Account</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="font-semibold text-sm text-foreground">Delete Account</div>
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Permanently delete your profile, skills, and associated records.
               </p>
             </div>
             <Button
               variant="destructive"
               size="sm"
+              className="bg-red-600 hover:bg-red-700 text-white shadow-[0_0_14px_rgba(239,68,68,0.3)] text-xs"
               onClick={() =>
                 toast.info(
                   "Account deletion is currently handled by admin request. Please contact support@polyskill.bd"

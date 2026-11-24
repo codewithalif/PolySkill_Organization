@@ -154,53 +154,53 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
       </div>
 
       {/* Main Profile Header Card */}
-      <Card className="relative overflow-hidden border-border/60 shadow-sm">
+      <Card className="relative overflow-hidden border-white/[0.08] bg-[#111B2E]/80 backdrop-blur-xl shadow-2xl rounded-2xl">
         {/* Decorative Top Accent Bar */}
-        <div className="h-3 w-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600" />
+        <div className="h-2 w-full bg-gradient-to-r from-primary via-cyan-400 to-[#786BFA]" />
 
-        <CardContent className="pt-8 pb-6 px-6 sm:px-8">
+        <CardContent className="pt-8 pb-7 px-6 sm:px-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             {/* Student Info */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-              <Avatar className="h-24 w-24 border-2 border-primary/20 shadow-md">
+              <Avatar className="h-24 w-24 ring-2 ring-primary/40 shadow-xl">
                 <AvatarImage src={student.avatar_url || ""} />
-                <AvatarFallback className="text-2xl font-bold bg-primary/10 text-primary">
+                <AvatarFallback className="text-2xl font-bold bg-primary/20 text-primary">
                   {initials}
                 </AvatarFallback>
               </Avatar>
 
               <div className="space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                  <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                     {student.full_name}
                   </h1>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs font-mono border-white/[0.08] bg-white/[0.04] text-muted-foreground">
                     {student.experience_level}
                   </Badge>
                   {student.role === "admin" && (
-                    <Badge variant="default" className="bg-purple-600 text-xs">
+                    <Badge variant="default" className="bg-primary text-white text-xs font-mono shadow-[0_0_10px_rgba(120,107,250,0.4)]">
                       Admin
                     </Badge>
                   )}
                   {student.role === "sub-admin" && (
-                    <Badge variant="default" className="bg-indigo-600 text-xs">
+                    <Badge variant="default" className="bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-xs font-mono">
                       Sub-Admin
                     </Badge>
                   )}
                 </div>
 
-                <p className="text-sm text-muted-foreground font-mono">
+                <p className="text-sm text-primary font-mono font-medium">
                   @{student.username}
                 </p>
 
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1 text-xs text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1 text-xs text-muted-foreground font-mono">
                   <span className="flex items-center gap-1.5 font-medium text-foreground">
                     <Building2 className="h-3.5 w-3.5 text-primary" />
                     {student.institute}
                   </span>
                   <span>•</span>
                   <span className="flex items-center gap-1.5">
-                    <GraduationCap className="h-3.5 w-3.5" />
+                    <GraduationCap className="h-3.5 w-3.5 text-cyan-400" />
                     {student.department} ({student.semester})
                   </span>
                 </div>
@@ -213,7 +213,7 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
                 <Button
                   asChild
                   size="lg"
-                  className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-semibold gap-2 shadow-sm"
+                  className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-medium gap-2 shadow-[0_0_16px_rgba(66,214,164,0.3)] rounded-xl text-xs h-10"
                 >
                   <a href={waUrl} target="_blank" rel="noopener noreferrer">
                     <WhatsAppIcon className="h-4 w-4 fill-current" />
@@ -225,7 +225,7 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
                   size="lg"
                   variant="secondary"
                   disabled
-                  className="w-full sm:w-auto opacity-50 cursor-not-allowed gap-2"
+                  className="w-full sm:w-auto opacity-50 cursor-not-allowed gap-2 rounded-xl text-xs h-10 bg-white/[0.04] text-muted-foreground"
                   title="WhatsApp number not added by student"
                 >
                   <WhatsAppIcon className="h-4 w-4 fill-current" />
@@ -236,7 +236,7 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
               {/* Social Links */}
               <div className="flex items-center gap-2">
                 {student.github_url && (
-                  <Button asChild size="icon" variant="outline" className="h-9 w-9">
+                  <Button asChild size="icon" variant="outline" className="h-9 w-9 border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.08] rounded-xl text-muted-foreground hover:text-foreground">
                     <a
                       href={student.github_url}
                       target="_blank"
@@ -248,7 +248,7 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
                   </Button>
                 )}
                 {student.portfolio_url && (
-                  <Button asChild size="icon" variant="outline" className="h-9 w-9">
+                  <Button asChild size="icon" variant="outline" className="h-9 w-9 border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.08] rounded-xl text-muted-foreground hover:text-foreground">
                     <a
                       href={student.portfolio_url}
                       target="_blank"
@@ -260,7 +260,7 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
                   </Button>
                 )}
                 {student.linkedin_url && (
-                  <Button asChild size="icon" variant="outline" className="h-9 w-9">
+                  <Button asChild size="icon" variant="outline" className="h-9 w-9 border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.08] rounded-xl text-muted-foreground hover:text-foreground">
                     <a
                       href={student.linkedin_url}
                       target="_blank"
@@ -272,7 +272,7 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
                   </Button>
                 )}
                 {student.facebook_url && (
-                  <Button asChild size="icon" variant="outline" className="h-9 w-9">
+                  <Button asChild size="icon" variant="outline" className="h-9 w-9 border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.08] rounded-xl text-muted-foreground hover:text-foreground">
                     <a
                       href={student.facebook_url}
                       target="_blank"
@@ -284,7 +284,7 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
                   </Button>
                 )}
                 {student.instagram_url && (
-                  <Button asChild size="icon" variant="outline" className="h-9 w-9">
+                  <Button asChild size="icon" variant="outline" className="h-9 w-9 border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.08] rounded-xl text-muted-foreground hover:text-foreground">
                     <a
                       href={student.instagram_url}
                       target="_blank"
@@ -302,9 +302,9 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
       </Card>
 
       {/* Bio / About Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">About</CardTitle>
+      <Card className="border-white/[0.08] bg-[#111B2E]/70 backdrop-blur-xl rounded-2xl shadow-xl">
+        <CardHeader className="pb-2">
+          <CardTitle className="font-heading text-lg text-foreground">About</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground leading-relaxed">
@@ -314,15 +314,15 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
       </Card>
 
       {/* Skills Showcase */}
-      <Card>
+      <Card className="border-white/[0.08] bg-[#111B2E]/70 backdrop-blur-xl rounded-2xl shadow-xl">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <div>
-            <CardTitle className="text-lg">Technical Skills</CardTitle>
-            <CardDescription className="text-xs">
+            <CardTitle className="font-heading text-lg text-foreground">Technical Skills</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground">
               Technologies and tools this student works with
             </CardDescription>
           </div>
-          <Badge variant="secondary" className="font-mono text-xs">
+          <Badge variant="outline" className="font-mono text-xs border-white/[0.08] bg-white/[0.04] text-muted-foreground">
             {skills.length} Skills
           </Badge>
         </CardHeader>
@@ -336,17 +336,17 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
               {skills.map((skill) => (
                 <div
                   key={skill.id}
-                  className="p-3 border rounded-lg bg-card/50 flex flex-col justify-between space-y-2 hover:border-primary/40 transition-colors"
+                  className="p-3.5 border border-white/[0.06] rounded-xl bg-white/[0.02] flex flex-col justify-between space-y-2 hover:border-primary/40 hover:bg-white/[0.04] transition-all"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-sm">{skill.name}</span>
-                    <Badge variant="outline" className="text-[10px]">
+                    <span className="font-heading font-semibold text-sm text-foreground">{skill.name}</span>
+                    <Badge variant="outline" className="text-[10px] font-mono border-white/[0.08] bg-white/[0.03] text-muted-foreground">
                       {skill.level}
                     </Badge>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                  <div className="w-full bg-white/[0.06] rounded-full h-1.5 overflow-hidden">
                     <div
-                      className="bg-primary h-1.5 rounded-full transition-all"
+                      className="bg-gradient-to-r from-primary to-cyan-400 h-1.5 rounded-full transition-all"
                       style={{ width: `${skill.progress || 60}%` }}
                     />
                   </div>
@@ -358,62 +358,62 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
       </Card>
 
       {/* Projects Showcase */}
-      <Card>
+      <Card className="border-white/[0.08] bg-[#111B2E]/70 backdrop-blur-xl rounded-2xl shadow-xl">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <div>
-            <CardTitle className="text-lg">Projects Showcase</CardTitle>
-            <CardDescription className="text-xs">
+            <CardTitle className="font-heading text-lg text-foreground">Projects Showcase</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground">
               Projects created and shared by {student.full_name}
             </CardDescription>
           </div>
-          <Badge variant="secondary" className="font-mono text-xs">
+          <Badge variant="outline" className="font-mono text-xs border-white/[0.08] bg-white/[0.04] text-muted-foreground">
             {projects.length} Projects
           </Badge>
         </CardHeader>
         <CardContent>
           {projects.length === 0 ? (
             <div className="py-10 text-center text-sm text-muted-foreground space-y-2">
-              <Layers className="h-8 w-8 mx-auto opacity-40" />
+              <Layers className="h-8 w-8 mx-auto opacity-40 text-primary" />
               <p>No projects published yet.</p>
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
               {projects.map((project) => (
-                <Card key={project.id} className="flex flex-col justify-between border hover:border-primary/50 transition-colors">
+                <Card key={project.id} className="group flex flex-col justify-between border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] hover:border-primary/40 transition-all rounded-xl">
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="text-[10px]">
+                      <Badge variant="outline" className="text-[10px] font-mono border-primary/20 bg-primary/5 text-primary">
                         {project.category}
                       </Badge>
-                      <Badge variant="secondary" className="text-[10px]">
+                      <Badge variant="outline" className="text-[10px] font-mono border-white/[0.08] bg-white/[0.03] text-muted-foreground">
                         {project.status}
                       </Badge>
                     </div>
-                    <CardTitle className="text-base mt-2 truncate">
+                    <CardTitle className="font-heading text-base mt-2 truncate text-foreground group-hover:text-primary transition-colors">
                       {project.title}
                     </CardTitle>
-                    <CardDescription className="text-xs line-clamp-2">
+                    <CardDescription className="text-xs line-clamp-2 text-muted-foreground leading-relaxed">
                       {project.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="pt-2 mt-auto space-y-3">
                     {project.tech_stack && project.tech_stack.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-1.5">
                         {project.tech_stack.slice(0, 4).map((tech) => (
-                          <Badge key={tech} variant="secondary" className="text-[10px]">
+                          <Badge key={tech} variant="secondary" className="text-[10px] font-mono bg-white/[0.04] border border-white/[0.06] text-secondary-foreground">
                             {tech}
                           </Badge>
                         ))}
                       </div>
                     )}
-                    <div className="pt-2 border-t flex items-center justify-between text-xs">
+                    <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
                       <div className="flex items-center gap-2">
                         {project.github_url && (
                           <a
                             href={project.github_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-foreground"
+                            className="text-muted-foreground hover:text-primary transition-colors"
                             title="Source Code"
                           >
                             <GithubIcon className="h-4 w-4" />
@@ -424,7 +424,7 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
                             href={project.live_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-foreground"
+                            className="text-muted-foreground hover:text-cyan-400 transition-colors"
                             title="Live Demo"
                           >
                             <ExternalLink className="h-4 w-4" />

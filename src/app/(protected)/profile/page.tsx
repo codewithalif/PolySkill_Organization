@@ -18,8 +18,8 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-4xl space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Edit Profile</h1>
-        <p className="text-muted-foreground">
+        <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground">Edit Profile</h1>
+        <p className="text-muted-foreground text-sm mt-1">
           Manage your polytechnic student identity, skills, and portfolio links.
         </p>
       </div>

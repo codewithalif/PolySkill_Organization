@@ -59,44 +59,44 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto py-10 px-4 space-y-8">
+    <div className="container max-w-4xl mx-auto py-12 px-4 sm:px-6 space-y-8">
       {/* Back button */}
       <div>
-        <Button asChild variant="ghost" size="sm">
+        <Button asChild variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground hover:bg-white/[0.04] gap-1.5">
           <Link href="/roadmaps">
-            <ArrowLeft className="mr-1 h-4 w-4" /> Back to All Roadmaps
+            <ArrowLeft className="h-4 w-4" /> Back to All Roadmaps
           </Link>
         </Button>
       </div>
 
       {/* Header */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <Badge variant="outline">{roadmap.difficulty}</Badge>
-          <span className="text-xs text-muted-foreground flex items-center gap-1">
-            <Clock className="h-3.5 w-3.5" /> {roadmap.estimated_duration}
+          <Badge variant="outline" className="text-xs font-mono border-primary/25 bg-primary/5 text-primary">{roadmap.difficulty}</Badge>
+          <span className="text-xs text-muted-foreground flex items-center gap-1 font-mono">
+            <Clock className="h-3.5 w-3.5 text-cyan-400" /> {roadmap.estimated_duration}
           </span>
         </div>
-        <h1 className="text-3xl font-bold tracking-tight">{roadmap.title}</h1>
-        <p className="text-muted-foreground text-sm sm:text-base">
+        <h1 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-foreground">{roadmap.title}</h1>
+        <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
           {roadmap.description}
         </p>
 
         {/* Overall Progress */}
-        <Card className="p-4 mt-4 bg-muted/40">
-          <div className="flex justify-between items-center text-sm mb-2">
-            <span className="font-semibold">Overall Progress</span>
+        <Card className="p-5 mt-4 border-white/[0.08] bg-[#111B2E]/75 backdrop-blur-xl rounded-2xl shadow-xl">
+          <div className="flex justify-between items-center text-xs sm:text-sm mb-2.5 font-mono">
+            <span className="font-heading font-semibold text-foreground">Overall Progress</span>
             <span className="font-bold text-primary">
               {completedCount} / {steps.length} Steps Completed ({progressPercent}%)
             </span>
           </div>
-          <Progress value={progressPercent} className="h-2.5" />
+          <Progress value={progressPercent} className="h-2.5 bg-white/[0.06] [&>div]:bg-gradient-to-r [&>div]:from-primary [&>div]:to-cyan-400" />
         </Card>
       </div>
 
       {/* Step Timeline */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-bold">Curriculum Steps</h2>
+      <div className="space-y-4 pt-2">
+        <h2 className="font-heading text-xl font-bold text-foreground">Curriculum Steps</h2>
 
         {steps.map((step, index) => {
           const isLoading = loadingStepId === step.id;
@@ -114,9 +114,9 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
           return (
             <Card
               key={step.id}
-              className={`transition-all ${
+              className={`border-white/[0.08] bg-[#111B2E]/65 backdrop-blur-md rounded-2xl transition-all duration-300 hover:border-primary/40 ${
                 step.is_completed
-                  ? "border-emerald-500/40 bg-emerald-50/20 dark:bg-emerald-950/10"
+                  ? "border-emerald-500/30 bg-emerald-500/[0.04]"
                   : ""
               }`}
             >
@@ -130,18 +130,18 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
                       title={step.is_completed ? "Mark incomplete" : "Mark as completed"}
                     >
                       {isLoading ? (
-                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
                       ) : step.is_completed ? (
-                        <CheckCircle2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+                        <CheckCircle2 className="h-6 w-6 text-emerald-400" />
                       ) : (
                         <Circle className="h-6 w-6 text-muted-foreground hover:text-foreground" />
                       )}
                     </button>
                     <div>
-                      <div className="text-xs font-semibold text-muted-foreground">
+                      <div className="text-[11px] font-mono font-semibold text-muted-foreground">
                         STEP {index + 1}
                       </div>
-                      <CardTitle className="text-lg mt-0.5">{step.title}</CardTitle>
+                      <CardTitle className="font-heading text-lg mt-0.5 text-foreground">{step.title}</CardTitle>
                     </div>
                   </div>
 
@@ -150,16 +150,16 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
                       <Button
                         size="sm"
                         variant={isPlayerOpen ? "secondary" : "default"}
-                        className={isPlayerOpen ? "" : "bg-rose-600 hover:bg-rose-700 text-white font-medium"}
+                        className={isPlayerOpen ? "text-xs rounded-xl" : "text-xs rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30 font-medium"}
                         onClick={() => setActiveVideoStepId(isPlayerOpen ? null : step.id)}
                       >
                         {isPlayerOpen ? (
                           <>
-                            <EyeOff className="h-4 w-4 mr-1.5" /> Hide Video
+                            <EyeOff className="h-3.5 w-3.5 mr-1.5" /> Hide Video
                           </>
                         ) : (
                           <>
-                            <PlayCircle className="h-4 w-4 mr-1.5" /> Watch Video
+                            <PlayCircle className="h-3.5 w-3.5 mr-1.5" /> Watch Video
                           </>
                         )}
                       </Button>
@@ -170,20 +170,25 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
                       variant={step.is_completed ? "outline" : "default"}
                       onClick={() => handleToggleStep(step.id)}
                       disabled={isLoading}
+                      className={
+                        step.is_completed
+                          ? "text-xs rounded-xl border-emerald-500/30 text-emerald-400 bg-emerald-500/10 font-mono"
+                          : "text-xs rounded-xl bg-primary hover:bg-primary/90 text-white shadow-[0_0_12px_rgba(120,107,250,0.4)]"
+                      }
                     >
                       {step.is_completed ? "Completed" : "Mark as Done"}
                     </Button>
                   </div>
                 </div>
 
-                <CardDescription className="text-sm mt-2 pl-9">
+                <CardDescription className="text-xs sm:text-sm mt-2 pl-9 text-muted-foreground leading-relaxed">
                   {step.description}
                 </CardDescription>
 
                 {/* Direct On-Page Embedded Video Player */}
                 {videoId && isPlayerOpen && (
                   <div className="mt-4 ml-0 sm:ml-9 space-y-2">
-                    <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-xl border bg-black">
+                    <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl border border-white/[0.1] bg-black">
                       <iframe
                         src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
                         title={step.title}
@@ -192,8 +197,8 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
                         className="absolute inset-0 h-full w-full"
                       />
                     </div>
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs text-muted-foreground px-1">
-                      <span className="flex items-center gap-1 text-emerald-600 font-medium">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs text-muted-foreground px-1 font-mono">
+                      <span className="flex items-center gap-1 text-emerald-400 font-medium">
                         <PlayCircle className="h-3.5 w-3.5" /> Playing inside PolySkill
                       </span>
                       <a
@@ -202,7 +207,7 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
                       >
-                        If restricted by creator, watch on YouTube <ExternalLink className="h-3 w-3" />
+                        Watch on YouTube <ExternalLink className="h-3 w-3" />
                       </a>
                     </div>
                   </div>
@@ -213,9 +218,9 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
                 <CardContent className="space-y-3 pl-13 pt-0">
                   {/* Topics */}
                   {step.topics.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pt-2 border-t">
+                    <div className="flex flex-wrap gap-1.5 pt-2 border-t border-white/[0.06]">
                       {step.topics.map((t) => (
-                        <Badge key={t} variant="secondary" className="text-xs">
+                        <Badge key={t} variant="secondary" className="text-[10px] font-mono bg-white/[0.04] border border-white/[0.06] text-secondary-foreground">
                           {t}
                         </Badge>
                       ))}
@@ -225,7 +230,7 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
                   {/* Recommended Resources */}
                   {step.resources.length > 0 && (
                     <div className="space-y-1.5 pt-1">
-                      <div className="text-xs font-semibold text-muted-foreground">
+                      <div className="text-xs font-mono font-medium text-muted-foreground">
                         Recommended Resources:
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -235,7 +240,7 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
                             <Link
                               key={idx}
                               href={res.url}
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline bg-primary/10 border border-primary/30 p-2 rounded-md"
+                              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline bg-primary/10 border border-primary/25 px-2.5 py-1.5 rounded-lg"
                             >
                               <span>🎓 {res.title}</span>
                               <ExternalLink className="h-3 w-3" />
@@ -246,7 +251,7 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
                               href={res.url}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center gap-1 text-xs text-primary hover:underline bg-background p-1.5 rounded border"
+                              className="inline-flex items-center gap-1 text-xs text-secondary-foreground hover:text-primary bg-white/[0.03] hover:bg-white/[0.06] px-2.5 py-1.5 rounded-lg border border-white/[0.06] transition-colors"
                             >
                               <span>{res.title}</span>
                               <ExternalLink className="h-3 w-3" />

@@ -10,14 +10,18 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-muted/20">
+    <div className="min-h-screen flex flex-col bg-[#080D19] relative overflow-hidden text-foreground">
+      {/* Ambient Aurora Orbs */}
+      <div className="absolute top-[-10%] left-[20%] w-[500px] h-[500px] rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[20%] w-[500px] h-[500px] rounded-full bg-cyan-500/10 blur-[120px] pointer-events-none" />
+
       {/* Top bar */}
-      <header className="flex items-center justify-between px-6 py-4 border-b bg-background/50 backdrop-blur-sm">
+      <header className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-white/[0.08] bg-[#0D1525]/75 backdrop-blur-xl">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 text-primary" />
           Back to Home
         </Link>
         <div className="flex items-center gap-2">
@@ -27,14 +31,14 @@ export default function AuthLayout({
       </header>
 
       {/* Auth content */}
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-8">
+      <main className="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-8">
         <div className="w-full max-w-md space-y-6">
           <div className="flex flex-col items-center text-center space-y-2">
-            <Link href="/" className="flex items-center gap-2 mb-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+            <Link href="/" className="flex items-center gap-2 mb-2 group">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#5643F5] text-white shadow-[0_0_20px_rgba(120,107,250,0.5)] group-hover:scale-105 transition-transform">
                 <Sparkles className="h-5 w-5" />
               </div>
-              <span className="text-2xl font-bold tracking-tight">{APP_NAME}</span>
+              <span className="font-heading text-2xl font-bold tracking-tight text-foreground">{APP_NAME}</span>
             </Link>
           </div>
           {children}
@@ -42,7 +46,7 @@ export default function AuthLayout({
       </main>
 
       {/* Footer text */}
-      <footer className="py-4 text-center text-xs text-muted-foreground">
+      <footer className="relative z-10 py-5 text-center text-xs text-muted-foreground font-mono border-t border-white/[0.04]">
         © 2026 {APP_NAME}. Built for polytechnic students in Bangladesh.
       </footer>
     </div>
