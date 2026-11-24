@@ -16,6 +16,7 @@ export interface Database {
           username: string
           email: string
           whatsapp_number: string | null
+          gender: "Male" | "Female" | "Other" | null
           avatar_url: string | null
           institute: string
           department: string
@@ -38,6 +39,7 @@ export interface Database {
           username: string
           email: string
           whatsapp_number?: string | null
+          gender?: "Male" | "Female" | "Other" | null
           avatar_url?: string | null
           institute: string
           department: string
@@ -60,6 +62,7 @@ export interface Database {
           username?: string
           email?: string
           whatsapp_number?: string | null
+          gender?: "Male" | "Female" | "Other" | null
           avatar_url?: string | null
           institute?: string
           department?: string

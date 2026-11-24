@@ -154,7 +154,7 @@ export function HtmlPlaylistClient({
           {/* YouTube Embedded Video Player */}
           <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-lg border bg-black">
             <iframe
-              src={`https://www.youtube-nocookie.com/embed/${currentLesson.videoId}?rel=0&modestbranding=1&enablejsapi=1`}
+              src={`https://www.youtube.com/embed/${currentLesson.videoId}?rel=0&modestbranding=1`}
               title={currentLesson.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen

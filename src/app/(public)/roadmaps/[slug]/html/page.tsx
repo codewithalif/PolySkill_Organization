@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { getHtmlLessonsWithProgressAction } from "@/actions/lessons";
 import { HtmlPlaylistClient } from "./html-playlist-client";
 
@@ -14,6 +15,7 @@ export default async function HtmlPlaylistPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await connection();
   const { slug } = await params;
 
   // This course specifically belongs to the web-development roadmap

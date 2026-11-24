@@ -20,6 +20,7 @@ import {
   SEMESTERS,
   INSTITUTES,
   EXPERIENCE_LEVELS,
+  GENDERS,
 } from "@/lib/constants";
 import { toast } from "sonner";
 import { Upload, Loader2, Save } from "lucide-react";
@@ -31,6 +32,7 @@ interface ProfileFormProps {
     username: string;
     email: string;
     whatsappNumber?: string;
+    gender?: "Male" | "Female" | "Other";
     avatar?: string;
     institute: string;
     department: string;
@@ -50,6 +52,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
     fullName: initialProfile.fullName,
     username: initialProfile.username || "",
     whatsappNumber: initialProfile.whatsappNumber || "",
+    gender: (initialProfile.gender as "Male" | "Female") || "Male",
     bio: initialProfile.bio || "",
     institute: initialProfile.institute,
     department: initialProfile.department,
@@ -108,6 +111,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
         fullName: formData.fullName,
         username: formData.username.trim().toLowerCase(),
         whatsappNumber: formData.whatsappNumber ? formData.whatsappNumber.trim() : undefined,
+        gender: formData.gender as "Male" | "Female",
         bio: formData.bio || undefined,
         institute: formData.institute as any,
         department: formData.department as any,
@@ -189,7 +193,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
           <CardDescription>Details that other polytechnic students will see</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-2">
               <Label htmlFor="fullName">Full Name</Label>
               <Input
@@ -198,6 +202,26 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 required
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="gender">Gender</Label>
+              <Select
+                value={formData.gender}
+                onValueChange={(val) => {
+                  if (val) setFormData({ ...formData, gender: val as "Male" | "Female" });
+                }}
+              >
+                <SelectTrigger id="gender">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {GENDERS.map((g) => (
+                    <SelectItem key={g} value={g}>
+                      {g}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="whatsappNumber">WhatsApp Number</Label>

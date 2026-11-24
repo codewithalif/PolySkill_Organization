@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,14 +16,23 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { INSTITUTES, DEPARTMENTS, SEMESTERS } from "@/lib/constants";
+import { INSTITUTES, DEPARTMENTS, SEMESTERS, GENDERS } from "@/lib/constants";
 import { registerAction } from "@/actions/auth";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [whatsappNumber, setWhatsappNumber] = useState("");
+  const [gender, setGender] = useState<(typeof GENDERS)[number]>(GENDERS[0]);
   const [institute, setInstitute] = useState<(typeof INSTITUTES)[number]>(INSTITUTES[0]);
   const [department, setDepartment] = useState<(typeof DEPARTMENTS)[number]>(DEPARTMENTS[0]);
   const [semester, setSemester] = useState<(typeof SEMESTERS)[number]>(SEMESTERS[0]);
@@ -30,7 +40,6 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +53,7 @@ export default function RegisterPage() {
         email,
         password,
         whatsappNumber,
+        gender,
         institute,
         department,
         semester,
@@ -56,8 +66,9 @@ export default function RegisterPage() {
         }
         toast.error(res.message || "Registration failed.");
       } else {
-        setIsSuccess(true);
-        toast.success(res.message || "Account created successfully!");
+        toast.success(res.message || "Welcome! Redirecting to your dashboard...");
+        router.push("/dashboard");
+        router.refresh();
       }
     } catch {
       setErrorMessage("An unexpected error occurred. Please try again.");
@@ -66,27 +77,6 @@ export default function RegisterPage() {
       setIsLoading(false);
     }
   };
-
-  if (isSuccess) {
-    return (
-      <Card className="shadow-lg border-muted">
-        <CardContent className="pt-8 pb-6 flex flex-col items-center text-center space-y-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
-            <CheckCircle2 className="h-8 w-8" />
-          </div>
-          <CardTitle className="text-xl">Registration Successful!</CardTitle>
-          <CardDescription className="max-w-xs">
-            Your PolySkill account for{" "}
-            <span className="font-semibold text-foreground">{email}</span> has been created.
-            No email verification is required. You can log in right away!
-          </CardDescription>
-          <Button asChild className="w-full mt-4">
-            <Link href="/login">Go to Login</Link>
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <Card className="shadow-lg border-muted">
@@ -153,6 +143,23 @@ export default function RegisterPage() {
             {fieldErrors.whatsappNumber && (
               <p className="text-xs text-destructive">{fieldErrors.whatsappNumber[0]}</p>
             )}
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="gender">Gender</Label>
+            <select
+              id="gender"
+              className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-input/30"
+              value={gender}
+              onChange={(e) => setGender(e.target.value as (typeof GENDERS)[number])}
+              disabled={isLoading}
+            >
+              {GENDERS.map((g) => (
+                <option key={g} value={g} className="bg-popover text-popover-foreground">
+                  {g}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="space-y-1.5">

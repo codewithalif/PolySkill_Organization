@@ -59,6 +59,8 @@ export function AuthProvider({
         fullName: data.full_name,
         username: data.username,
         email: data.email,
+        whatsappNumber: data.whatsapp_number || undefined,
+        gender: data.gender || undefined,
         avatar: data.avatar_url || undefined,
         institute: data.institute,
         department: data.department,

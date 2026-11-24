@@ -37,18 +37,19 @@ export async function registerAction(
     };
   }
 
-  const { fullName, email, password, whatsappNumber, institute, department, semester } =
+  const { fullName, email, password, whatsappNumber, gender, institute, department, semester } =
     validation.data;
 
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signUp({
+  const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
         full_name: fullName,
         whatsapp_number: whatsappNumber.trim(),
+        gender: gender || null,
         institute,
         department,
         semester,
@@ -57,17 +58,34 @@ export async function registerAction(
     },
   });
 
-  if (error) {
+  if (signUpError) {
     return {
       success: false,
-      message: error.message,
+      message: signUpError.message,
     };
+  }
+
+  // If session wasn't automatically created by signUp (e.g. if email confirmations were toggled on or returned null session),
+  // automatically sign in with password so the user is immediately authenticated.
+  if (!signUpData?.session) {
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (signInError) {
+      // Even if sign-in had an issue, account was created
+      return {
+        success: true,
+        message: "Account created! Please sign in with your password.",
+        data: { email },
+      };
+    }
   }
 
   revalidatePath("/", "layout");
   return {
     success: true,
-    message: "Registration successful! You can now log in immediately.",
+    message: "Welcome to PolySkill! Setting up your dashboard...",
     data: { email },
   };
 }
@@ -87,7 +105,7 @@ export async function loginAction(
     };
   }
 
-  const { email, password } = validation.data;
+  const { email, password, gender } = validation.data;
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -100,6 +118,19 @@ export async function loginAction(
       success: false,
       message: error.message,
     };
+  }
+
+  // If gender was optionally selected on login, update profile
+  if (gender) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from("profiles")
+        .update({ gender, updated_at: new Date().toISOString() })
+        .eq("id", user.id);
+    }
   }
 
   revalidatePath("/", "layout");
@@ -225,6 +256,7 @@ export async function getCurrentUser() {
     username: profile.username,
     email: profile.email,
     whatsappNumber: profile.whatsapp_number || undefined,
+    gender: profile.gender || undefined,
     avatar: profile.avatar_url || undefined,
     institute: profile.institute,
     department: profile.department,

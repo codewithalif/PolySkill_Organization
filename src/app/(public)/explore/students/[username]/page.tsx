@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import Link from "next/link";
 import { getPublicProfileAction } from "@/actions/profiles";
 import { getStudentSkillsAction } from "@/actions/skills";
@@ -23,6 +24,7 @@ interface StudentProfilePageProps {
 }
 
 export async function generateMetadata({ params }: StudentProfilePageProps) {
+  await connection();
   const { username } = await params;
   const res = await getPublicProfileAction(username);
   if (!res.success || !res.data) {
@@ -111,6 +113,7 @@ function getWhatsAppUrl(phone?: string | null) {
 }
 
 export default async function StudentProfilePage({ params }: StudentProfilePageProps) {
+  await connection();
   const { username } = await params;
 
   const profileRes = await getPublicProfileAction(username);

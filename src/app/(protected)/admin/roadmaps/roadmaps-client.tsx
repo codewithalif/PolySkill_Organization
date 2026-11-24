@@ -461,7 +461,7 @@ export function RoadmapsAdminClient({ initialRoadmaps }: RoadmapsClientProps) {
       </Dialog>
       {/* Dialog: Add YouTube Video Step */}
       <Dialog open={isAddYouTubeOpen} onOpenChange={setIsAddYouTubeOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <form onSubmit={handleAddYouTubeStep}>
             <DialogHeader>
               <div className="flex items-center gap-2">
@@ -471,7 +471,7 @@ export function RoadmapsAdminClient({ initialRoadmaps }: RoadmapsClientProps) {
                 <div>
                   <DialogTitle>Add YouTube Video Step</DialogTitle>
                   <DialogDescription>
-                    Paste any YouTube video link and assign its step number.
+                    Paste YouTube video embed code (iframe) or link.
                   </DialogDescription>
                 </div>
               </div>
@@ -479,10 +479,11 @@ export function RoadmapsAdminClient({ initialRoadmaps }: RoadmapsClientProps) {
 
             <div className="space-y-4 py-4">
               <div className="space-y-1.5">
-                <Label htmlFor="youtubeUrl">YouTube Video Link or ID *</Label>
-                <Input
+                <Label htmlFor="youtubeUrl">YouTube Embed Code or Video Link *</Label>
+                <Textarea
                   id="youtubeUrl"
-                  placeholder="https://www.youtube.com/watch?v=... or youtu.be/..."
+                  rows={3}
+                  placeholder={`<iframe width="560" height="315" src="https://www.youtube.com/embed/..." ...></iframe>\nOR https://www.youtube.com/watch?v=...`}
                   value={youtubeForm.youtubeUrl}
                   onChange={(e) =>
                     setYoutubeForm({ ...youtubeForm, youtubeUrl: e.target.value })
@@ -490,7 +491,7 @@ export function RoadmapsAdminClient({ initialRoadmaps }: RoadmapsClientProps) {
                   required
                 />
                 <p className="text-[11px] text-muted-foreground">
-                  Supports standard watch links, youtu.be short links, or embed URLs.
+                  Paste the full YouTube <strong>Embed Code</strong> (&lt;iframe...&gt;), an embed URL, or standard video link. The video will play directly on the website.
                 </p>
               </div>
 

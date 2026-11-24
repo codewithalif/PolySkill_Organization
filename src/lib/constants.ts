@@ -36,6 +36,8 @@ export const ADMIN_NAV_LINKS = [
   { label: "Announcements", href: "/admin/announcements", icon: "Megaphone" },
 ] as const;
 
+export const GENDERS = ["Male", "Female"] as const;
+
 export const DEPARTMENTS = [
   "Computer Science & Technology",
   "Electrical & Electronic Technology",

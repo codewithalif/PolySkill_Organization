@@ -7,9 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { CheckCircle2, Circle, Clock, ExternalLink, ArrowLeft, Loader2 } from "lucide-react";
+import { CheckCircle2, Circle, Clock, ExternalLink, ArrowLeft, Loader2, PlayCircle, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import type { RoadmapWithDetails } from "@/actions/roadmaps";
+
+function extractYouTubeVideoId(urlOrEmbed: string): string | null {
+  if (!urlOrEmbed) return null;
+  const matchIframe = urlOrEmbed.match(/src=["'](?:https?:)?\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/([a-zA-Z0-9_-]{11})/i);
+  if (matchIframe) return matchIframe[1];
+  const matchEmbed = urlOrEmbed.match(/(?:youtube(?:-nocookie)?\.com\/embed\/)([a-zA-Z0-9_-]{11})/i);
+  if (matchEmbed) return matchEmbed[1];
+  const matchWatch = urlOrEmbed.match(/[?&]v=([a-zA-Z0-9_-]{11})/i);
+  if (matchWatch) return matchWatch[1];
+  const matchShort = urlOrEmbed.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/i);
+  if (matchShort) return matchShort[1];
+  if (/^[a-zA-Z0-9_-]{11}$/.test(urlOrEmbed.trim())) return urlOrEmbed.trim();
+  return null;
+}
 
 interface RoadmapDetailClientProps {
   roadmap: RoadmapWithDetails;
@@ -18,6 +32,7 @@ interface RoadmapDetailClientProps {
 export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
   const [steps, setSteps] = useState(roadmap.steps);
   const [loadingStepId, setLoadingStepId] = useState<string | null>(null);
+  const [activeVideoStepId, setActiveVideoStepId] = useState<string | null>(null);
 
   const completedCount = steps.filter((s) => s.is_completed).length;
   const progressPercent =
@@ -86,6 +101,16 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
         {steps.map((step, index) => {
           const isLoading = loadingStepId === step.id;
 
+          // Find if this step contains a YouTube video resource
+          const videoResource = step.resources?.find((r: any) => {
+            const vidId = r.videoId || extractYouTubeVideoId(r.embedUrl || r.url || "");
+            return !!vidId;
+          });
+          const videoId = videoResource
+            ? videoResource.videoId || extractYouTubeVideoId(videoResource.embedUrl || videoResource.url || "")
+            : null;
+          const isPlayerOpen = activeVideoStepId === step.id;
+
           return (
             <Card
               key={step.id}
@@ -120,19 +145,68 @@ export function RoadmapDetailClient({ roadmap }: RoadmapDetailClientProps) {
                     </div>
                   </div>
 
-                  <Button
-                    size="sm"
-                    variant={step.is_completed ? "outline" : "default"}
-                    onClick={() => handleToggleStep(step.id)}
-                    disabled={isLoading}
-                  >
-                    {step.is_completed ? "Completed" : "Mark as Done"}
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {videoId && (
+                      <Button
+                        size="sm"
+                        variant={isPlayerOpen ? "secondary" : "default"}
+                        className={isPlayerOpen ? "" : "bg-rose-600 hover:bg-rose-700 text-white font-medium"}
+                        onClick={() => setActiveVideoStepId(isPlayerOpen ? null : step.id)}
+                      >
+                        {isPlayerOpen ? (
+                          <>
+                            <EyeOff className="h-4 w-4 mr-1.5" /> Hide Video
+                          </>
+                        ) : (
+                          <>
+                            <PlayCircle className="h-4 w-4 mr-1.5" /> Watch Video
+                          </>
+                        )}
+                      </Button>
+                    )}
+
+                    <Button
+                      size="sm"
+                      variant={step.is_completed ? "outline" : "default"}
+                      onClick={() => handleToggleStep(step.id)}
+                      disabled={isLoading}
+                    >
+                      {step.is_completed ? "Completed" : "Mark as Done"}
+                    </Button>
+                  </div>
                 </div>
 
                 <CardDescription className="text-sm mt-2 pl-9">
                   {step.description}
                 </CardDescription>
+
+                {/* Direct On-Page Embedded Video Player */}
+                {videoId && isPlayerOpen && (
+                  <div className="mt-4 ml-0 sm:ml-9 space-y-2">
+                    <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-xl border bg-black">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
+                        title={step.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                        className="absolute inset-0 h-full w-full"
+                      />
+                    </div>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs text-muted-foreground px-1">
+                      <span className="flex items-center gap-1 text-emerald-600 font-medium">
+                        <PlayCircle className="h-3.5 w-3.5" /> Playing inside PolySkill
+                      </span>
+                      <a
+                        href={`https://www.youtube.com/watch?v=${videoId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
+                      >
+                        If restricted by creator, watch on YouTube <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                  </div>
+                )}
               </CardHeader>
 
               {(step.topics.length > 0 || step.resources.length > 0) && (

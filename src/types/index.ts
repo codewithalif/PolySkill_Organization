@@ -7,6 +7,7 @@ export interface User {
   username: string;
   email: string;
   whatsappNumber?: string;
+  gender?: "Male" | "Female" | "Other";
   avatar?: string;
   institute: string;
   department: string;

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { getRoadmapBySlugAction } from "@/actions/roadmaps";
 import { RoadmapDetailClient } from "./roadmap-detail-client";
 
@@ -9,6 +10,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await connection();
   const { slug } = await params;
   const res = await getRoadmapBySlugAction(slug);
   if (!res.success || !res.data) {
@@ -25,6 +27,7 @@ export default async function RoadmapDetailPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await connection();
   const { slug } = await params;
   const res = await getRoadmapBySlugAction(slug);
 

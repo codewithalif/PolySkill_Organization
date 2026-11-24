@@ -7,7 +7,6 @@ import { getCurrentUser } from "@/actions/auth";
 import { getStudentSkillsAction } from "@/actions/skills";
 import { getMyProjectsAction } from "@/actions/projects";
 import { getMyTeamsAction } from "@/actions/teams";
-import { getMyInvitationsAction } from "@/actions/invitations";
 import { getActiveAnnouncementsAction } from "@/actions/announcements";
 import { DashboardAnnouncements } from "@/components/shared/dashboard-announcements";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,11 +17,9 @@ import {
   Zap,
   FolderKanban,
   Users,
-  Mail,
-  ArrowRight,
-  PlusCircle,
   Search,
-  CheckCircle2,
+  PlusCircle,
+  ArrowRight,
 } from "lucide-react";
 
 export const metadata = {
@@ -35,18 +32,16 @@ export default async function DashboardPage() {
   if (!user) redirect("/login");
 
   // Fetch real data in parallel
-  const [skillsRes, projectsRes, teamsRes, invitationsRes, announcementsRes] = await Promise.all([
+  const [skillsRes, projectsRes, teamsRes, announcementsRes] = await Promise.all([
     getStudentSkillsAction(user.id),
     getMyProjectsAction(),
     getMyTeamsAction(),
-    getMyInvitationsAction(),
     getActiveAnnouncementsAction(),
   ]);
 
   const skills = skillsRes.success && skillsRes.data ? skillsRes.data : [];
   const projects = projectsRes.success && projectsRes.data ? projectsRes.data : [];
   const teams = teamsRes.success && teamsRes.data ? teamsRes.data : [];
-  const invitations = invitationsRes.success && invitationsRes.data ? invitationsRes.data : [];
   const announcements = announcementsRes.success && announcementsRes.data ? announcementsRes.data : [];
 
   const stats = [
@@ -73,14 +68,6 @@ export default async function DashboardPage() {
       icon: Users,
       href: "/teams",
       color: "text-emerald-500",
-    },
-    {
-      title: "Invitations",
-      value: invitations.length,
-      description: "Pending requests",
-      icon: Mail,
-      href: "/invitations",
-      color: "text-purple-500",
     },
   ];
 
@@ -135,7 +122,7 @@ export default async function DashboardPage() {
       <DashboardAnnouncements initialAnnouncements={announcements} />
 
       {/* Stats Cards Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -196,39 +183,39 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Pending Invitations or Teams */}
+        {/* Active Collaborations / Teams */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Team Invitations</CardTitle>
-              <CardDescription>Collaboration requests from peers</CardDescription>
+              <CardTitle>My Collaborations</CardTitle>
+              <CardDescription>Active teams and projects you belong to</CardDescription>
             </div>
             <Button asChild size="sm" variant="ghost">
-              <Link href="/invitations">View All</Link>
+              <Link href="/teams">View Teams</Link>
             </Button>
           </CardHeader>
           <CardContent>
-            {invitations.length === 0 ? (
+            {teams.length === 0 ? (
               <div className="text-center py-6 text-muted-foreground text-sm">
-                No pending invitations. Explore teams and apply!
+                No teams joined yet. Explore teams or start your own!
               </div>
             ) : (
               <div className="space-y-3">
-                {invitations.slice(0, 3).map((inv) => (
+                {teams.slice(0, 3).map((team) => (
                   <div
-                    key={inv.id}
+                    key={team.id}
                     className="flex items-center justify-between p-3 rounded-lg border bg-card text-card-foreground"
                   >
                     <div>
                       <div className="font-medium text-sm">
-                        {inv.team?.name || "Team Project"}
+                        {team.name}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Invited by {inv.from_user?.full_name || "a peer"}
+                        {team.description ? team.description.slice(0, 40) + "..." : "Team collaboration"}
                       </div>
                     </div>
-                    <Button asChild size="sm">
-                      <Link href="/invitations">Review</Link>
+                    <Button asChild size="sm" variant="outline">
+                      <Link href="/teams">Open</Link>
                     </Button>
                   </div>
                 ))}

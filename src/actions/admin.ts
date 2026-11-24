@@ -475,7 +475,7 @@ export async function deleteRoadmapAction(roadmapId: string): Promise<ActionResu
 }
 
 // ==========================================
-// YOUTUBE VIDEO STEP BUILDER (LINK + STEP NUMBER)
+// YOUTUBE VIDEO STEP BUILDER (LINK / EMBED CODE + STEP NUMBER)
 // ==========================================
 
 export async function addYouTubeVideoStepAction(input: {
@@ -488,31 +488,37 @@ export async function addYouTubeVideoStepAction(input: {
   try {
     const { supabase } = await requireAdmin();
 
-    // 1. Parse video ID from any YouTube URL format:
-    // https://www.youtube.com/watch?v=VIDEO_ID
-    // https://youtu.be/VIDEO_ID
-    // https://www.youtube.com/embed/VIDEO_ID
-    const url = input.youtubeUrl.trim();
+    // 1. Parse video ID from any YouTube URL format OR <iframe> embed code:
+    // - Full <iframe> embed snippet: <iframe src="https://www.youtube.com/embed/VIDEO_ID" ...></iframe>
+    // - https://www.youtube.com/embed/VIDEO_ID
+    // - https://www.youtube.com/watch?v=VIDEO_ID
+    // - https://youtu.be/VIDEO_ID
+    // - Direct 11-char video ID
+    const rawInput = input.youtubeUrl.trim();
     let videoId = "";
 
-    const matchWatch = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
-    const matchShort = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
-    const matchEmbed = url.match(/embed\/([a-zA-Z0-9_-]{11})/);
+    // Match embed iframe src or raw embed url
+    const matchIframe = rawInput.match(/src=["'](?:https?:)?\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/([a-zA-Z0-9_-]{11})/i);
+    const matchEmbed = rawInput.match(/(?:youtube(?:-nocookie)?\.com\/embed\/)([a-zA-Z0-9_-]{11})/i);
+    const matchWatch = rawInput.match(/[?&]v=([a-zA-Z0-9_-]{11})/i);
+    const matchShort = rawInput.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/i);
 
-    if (matchWatch) {
+    if (matchIframe) {
+      videoId = matchIframe[1];
+    } else if (matchEmbed) {
+      videoId = matchEmbed[1];
+    } else if (matchWatch) {
       videoId = matchWatch[1];
     } else if (matchShort) {
       videoId = matchShort[1];
-    } else if (matchEmbed) {
-      videoId = matchEmbed[1];
-    } else if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
-      videoId = url;
+    } else if (/^[a-zA-Z0-9_-]{11}$/.test(rawInput)) {
+      videoId = rawInput;
     }
 
     if (!videoId) {
       return {
         success: false,
-        message: "Invalid YouTube URL. Please provide a valid YouTube link or video ID.",
+        message: "Invalid YouTube Embed Code or Link. Please paste a valid YouTube embed code (<iframe>...</iframe>), link, or video ID.",
       };
     }
 
@@ -522,10 +528,13 @@ export async function addYouTubeVideoStepAction(input: {
       `Watch and practice the technical concepts taught in this video lesson.`;
 
     const cleanUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
     const resources = [
       {
         title: `YouTube Lesson (${videoId})`,
         url: cleanUrl,
+        embedUrl: embedUrl,
+        videoId: videoId,
         type: "video",
       },
     ];

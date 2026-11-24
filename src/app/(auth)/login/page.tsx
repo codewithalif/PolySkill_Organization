@@ -9,6 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Card,
   CardHeader,
   CardTitle,
@@ -17,6 +24,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { loginAction } from "@/actions/auth";
+import { GENDERS } from "@/lib/constants";
 
 function LoginForm() {
   const router = useRouter();
@@ -25,6 +33,7 @@ function LoginForm() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [gender, setGender] = useState<"Male" | "Female" | "">("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -34,7 +43,11 @@ function LoginForm() {
     setErrorMessage(null);
 
     try {
-      const res = await loginAction({ email, password });
+      const res = await loginAction({
+        email,
+        password,
+        gender: (gender as "Male" | "Female") || undefined,
+      });
       if (!res.success) {
         setErrorMessage(res.message || "Failed to log in.");
         toast.error(res.message || "Failed to log in.");
@@ -100,6 +113,26 @@ function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="gender">Gender</Label>
+            <Select
+              value={gender}
+              onValueChange={(val) => setGender((val as "Male" | "Female") || "")}
+              disabled={isLoading}
+            >
+              <SelectTrigger id="gender">
+                <SelectValue placeholder="Select gender (Male / Female)" />
+              </SelectTrigger>
+              <SelectContent>
+                {GENDERS.map((g) => (
+                  <SelectItem key={g} value={g}>
+                    {g}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
 

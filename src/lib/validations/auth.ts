@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DEPARTMENTS, INSTITUTES, SEMESTERS, EXPERIENCE_LEVELS } from "@/lib/constants";
+import { DEPARTMENTS, INSTITUTES, SEMESTERS, EXPERIENCE_LEVELS, GENDERS } from "@/lib/constants";
 
 export const registerSchema = z.object({
   fullName: z
@@ -17,6 +17,9 @@ export const registerSchema = z.object({
     .min(10, "WhatsApp number must be at least 10 digits")
     .max(20, "WhatsApp number cannot exceed 20 characters")
     .regex(/^[0-9+\s-]+$/, "Please enter a valid WhatsApp phone number"),
+  gender: z.enum(GENDERS, {
+    message: "Please select your gender (Male or Female)",
+  }).optional(),
   institute: z.enum(INSTITUTES, {
     message: "Please select a valid institute",
   }),
@@ -31,6 +34,7 @@ export const registerSchema = z.object({
 export const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
+  gender: z.enum(GENDERS).optional(),
 });
 
 export const forgotPasswordSchema = z.object({
@@ -58,6 +62,7 @@ export const updateProfileSchema = z.object({
     .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores")
     .transform((val) => val.toLowerCase().trim()),
   whatsappNumber: z.string().max(20).optional().nullable(),
+  gender: z.enum(GENDERS).optional().nullable(),
   bio: z.string().max(500).optional().nullable(),
   institute: z.enum(INSTITUTES),
   department: z.enum(DEPARTMENTS),
