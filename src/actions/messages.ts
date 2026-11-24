@@ -190,77 +190,89 @@ export async function searchStudentByRollAction(
 export async function getOrCreateConversationAction(
   otherUserId: string
 ): Promise<ActionResult<{ conversationId: string; otherUser?: SearchedStudent }>> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user) {
-    return { success: false, message: "Authentication required" };
-  }
+    if (!user) {
+      return { success: false, message: "Authentication required" };
+    }
 
-  if (otherUserId === user.id) {
-    return { success: false, message: "Cannot message yourself" };
-  }
+    if (otherUserId === user.id) {
+      return { success: false, message: "Cannot message yourself" };
+    }
 
-  // Fetch the other user's profile
-  const { data: otherProfile } = await supabase
-    .from("profiles")
-    .select("id, full_name, username, whatsapp_number, avatar_url, institute, department, semester")
-    .eq("id", otherUserId)
-    .single();
+    // Fetch the other user's profile
+    const { data: otherProfile } = await supabase
+      .from("profiles")
+      .select("id, full_name, username, whatsapp_number, avatar_url, institute, department, semester")
+      .eq("id", otherUserId)
+      .single();
 
-  // Check if existing conversation exists between these two
-  const { data: myConvs } = await supabase
-    .from("conversation_members")
-    .select("conversation_id")
-    .eq("user_id", user.id);
-
-  if (myConvs && myConvs.length > 0) {
-    const myConvIds = myConvs.map((c) => c.conversation_id);
-    const { data: match } = await supabase
+    // Check if existing conversation exists between these two
+    const { data: myConvs, error: myConvsErr } = await supabase
       .from("conversation_members")
       .select("conversation_id")
-      .eq("user_id", otherUserId)
-      .in("conversation_id", myConvIds)
-      .limit(1)
-      .maybeSingle();
+      .eq("user_id", user.id);
 
-    if (match) {
-      return {
-        success: true,
-        data: {
-          conversationId: match.conversation_id,
-          otherUser: (otherProfile as SearchedStudent) || undefined,
-        },
-      };
+    if (myConvsErr) {
+      return { success: false, message: myConvsErr.message };
     }
+
+    if (myConvs && myConvs.length > 0) {
+      const myConvIds = myConvs.map((c) => c.conversation_id);
+      const { data: match } = await supabase
+        .from("conversation_members")
+        .select("conversation_id")
+        .eq("user_id", otherUserId)
+        .in("conversation_id", myConvIds)
+        .limit(1)
+        .maybeSingle();
+
+      if (match) {
+        return {
+          success: true,
+          data: {
+            conversationId: match.conversation_id,
+            otherUser: (otherProfile as SearchedStudent) || undefined,
+          },
+        };
+      }
+    }
+
+    // Create new conversation
+    const { data: newConv, error: convErr } = await supabase
+      .from("conversations")
+      .insert({})
+      .select("id")
+      .single();
+
+    if (convErr || !newConv) {
+      return { success: false, message: convErr?.message || "Failed to create conversation" };
+    }
+
+    // Add both members
+    const { error: membersErr } = await supabase.from("conversation_members").insert([
+      { conversation_id: newConv.id, user_id: user.id },
+      { conversation_id: newConv.id, user_id: otherUserId },
+    ]);
+
+    if (membersErr) {
+      return { success: false, message: membersErr.message };
+    }
+
+    return {
+      success: true,
+      data: {
+        conversationId: newConv.id,
+        otherUser: (otherProfile as SearchedStudent) || undefined,
+      },
+    };
+  } catch (err: any) {
+    return { success: false, message: err?.message || "Failed to start conversation" };
   }
-
-  // Create new conversation
-  const { data: newConv, error: convErr } = await supabase
-    .from("conversations")
-    .insert({})
-    .select("id")
-    .single();
-
-  if (convErr || !newConv) {
-    return { success: false, message: convErr?.message || "Failed to create conversation" };
-  }
-
-  // Add both members
-  await supabase.from("conversation_members").insert([
-    { conversation_id: newConv.id, user_id: user.id },
-    { conversation_id: newConv.id, user_id: otherUserId },
-  ]);
-
-  return {
-    success: true,
-    data: {
-      conversationId: newConv.id,
-      otherUser: (otherProfile as SearchedStudent) || undefined,
-    },
-  };
 }
 
 /** Get message history for a conversation */
