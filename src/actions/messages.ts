@@ -211,7 +211,23 @@ export async function getOrCreateConversationAction(
       .eq("id", otherUserId)
       .single();
 
-    // Check if existing conversation exists between these two
+    // 1. Try atomic RPC function first (fastest, cleanest, zero RLS issues)
+    const { data: rpcConvId, error: rpcErr } = await supabase.rpc(
+      "create_direct_conversation",
+      { other_user_id: otherUserId }
+    );
+
+    if (!rpcErr && rpcConvId) {
+      return {
+        success: true,
+        data: {
+          conversationId: rpcConvId,
+          otherUser: (otherProfile as SearchedStudent) || undefined,
+        },
+      };
+    }
+
+    // 2. Fallback: Check if existing conversation exists between these two
     const { data: myConvs, error: myConvsErr } = await supabase
       .from("conversation_members")
       .select("conversation_id")
@@ -242,10 +258,10 @@ export async function getOrCreateConversationAction(
       }
     }
 
-    // Create new conversation
+    // 3. Fallback: Create new conversation with created_by
     const { data: newConv, error: convErr } = await supabase
       .from("conversations")
-      .insert({})
+      .insert({ created_by: user.id })
       .select("id")
       .single();
 
