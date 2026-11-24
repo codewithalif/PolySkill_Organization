@@ -48,6 +48,9 @@ export interface TeamWithDetails {
   } | null;
   members: TeamMemberWithProfile[];
   member_count: number;
+  is_leader?: boolean;
+  is_member?: boolean;
+  has_pending_request?: boolean;
 }
 
 /** Get list of teams with filters */
@@ -60,6 +63,10 @@ export async function getTeamsAction(filters?: {
 }): Promise<ActionResult<{ teams: TeamWithDetails[]; total: number }>> {
   try {
     const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     const limit = filters?.limit ?? 12;
     const page = filters?.page ?? 1;
     const from = (page - 1) * limit;
@@ -92,12 +99,39 @@ export async function getTeamsAction(filters?: {
 
     const teamIds = (teamsData || []).map((t: any) => t.id);
     let membersMap: Record<string, TeamMemberWithProfile[]> = {};
+    const userMemberTeamIds = new Set<string>();
+    const userRequestedTeamIds = new Set<string>();
 
     if (teamIds.length > 0) {
-      const { data: membersData } = await supabase
+      const membersQuery = supabase
         .from("team_members")
         .select("id, team_id, user_id, role, joined_at, profile:profiles(id, full_name, username, avatar_url, institute, department)")
         .in("team_id", teamIds);
+
+      const membershipsQuery = user
+        ? supabase
+            .from("team_members")
+            .select("team_id")
+            .eq("user_id", user.id)
+            .in("team_id", teamIds)
+        : null;
+
+      const requestsQuery = user
+        ? supabase
+            .from("team_invitations")
+            .select("team_id")
+            .eq("from_user_id", user.id)
+            .eq("status", "pending")
+            .in("team_id", teamIds)
+        : null;
+
+      const [membersRes, membershipsRes, requestsRes] = await Promise.all([
+        membersQuery,
+        membershipsQuery,
+        requestsQuery,
+      ]);
+
+      const membersData = membersRes.data;
 
       if (membersData) {
         membersData.forEach((m: any) => {
@@ -105,12 +139,22 @@ export async function getTeamsAction(filters?: {
           membersMap[m.team_id].push(m);
         });
       }
+
+      if (membershipsRes?.data) {
+        membershipsRes.data.forEach((m: any) => userMemberTeamIds.add(m.team_id));
+      }
+      if (requestsRes?.data) {
+        requestsRes.data.forEach((r: any) => userRequestedTeamIds.add(r.team_id));
+      }
     }
 
     const teams: TeamWithDetails[] = (teamsData || []).map((t: any) => ({
       ...t,
       members: membersMap[t.id] || [],
       member_count: (membersMap[t.id] || []).length,
+      is_leader: user ? t.created_by === user.id : false,
+      is_member: user ? userMemberTeamIds.has(t.id) : false,
+      has_pending_request: user ? userRequestedTeamIds.has(t.id) : false,
     }));
 
     return {

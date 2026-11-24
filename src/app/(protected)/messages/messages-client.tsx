@@ -120,6 +120,37 @@ export function MessagesClient({
     };
   }, [selectedConvId]);
 
+  // Free-tier friendly lightweight polling (5s interval when tab is active)
+  useEffect(() => {
+    if (!selectedConvId) return;
+
+    const interval = setInterval(async () => {
+      if (typeof document !== "undefined" && document.visibilityState !== "visible") {
+        return;
+      }
+
+      try {
+        const res = await getMessagesAction(selectedConvId);
+        if (res.success && res.data) {
+          setMessages((prev) => {
+            const incoming = res.data!;
+            if (
+              incoming.length !== prev.length ||
+              (incoming.length > 0 && incoming[incoming.length - 1].id !== prev[prev.length - 1]?.id)
+            ) {
+              return incoming;
+            }
+            return prev;
+          });
+        }
+      } catch {
+        // Silently catch background polling errors
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [selectedConvId]);
+
   // Auto-scroll to bottom of chat
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

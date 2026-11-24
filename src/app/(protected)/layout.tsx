@@ -7,6 +7,7 @@ export const instant = false;
 import { logoutAction, getCurrentUser } from "@/actions/auth";
 import { getActiveAnnouncementsAction } from "@/actions/announcements";
 import { AnnouncementBanner } from "@/components/shared/announcement-banner";
+import { SyncUserSession } from "@/components/shared/sync-user-session";
 import { AuthProvider } from "@/providers/auth-provider";
 import { STUDENT_NAV_LINKS, ADMIN_NAV_LINKS } from "@/lib/constants";
 import { SidebarLink } from "./components/sidebar-link";
@@ -159,6 +160,7 @@ export default async function ProtectedLayout({
 
   return (
     <AuthProvider initialUser={user}>
+      <SyncUserSession userId={user.id} />
       <div className="flex min-h-screen bg-background">
         {/* Desktop Sidebar */}
         <aside className="hidden w-64 shrink-0 border-r lg:flex lg:flex-col">

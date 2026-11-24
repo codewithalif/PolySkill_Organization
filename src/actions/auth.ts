@@ -108,7 +108,7 @@ export async function loginAction(
   const { email, password, gender } = validation.data;
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { error, data: signInData } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -120,16 +120,48 @@ export async function loginAction(
     };
   }
 
-  // If gender was optionally selected on login, update profile
-  if (gender) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) {
+  // Update last_login_at and optionally gender on each login
+  if (signInData?.user) {
+    const profileUpdates: Record<string, unknown> = {
+      last_login_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    if (gender) {
+      profileUpdates.gender = gender;
+    }
+
+    // Upsert-style: check profile exists first, then update (or create if trigger missed it)
+    const { data: existingProfile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", signInData.user.id)
+      .maybeSingle();
+
+    if (existingProfile) {
       await supabase
         .from("profiles")
-        .update({ gender, updated_at: new Date().toISOString() })
-        .eq("id", user.id);
+        .update(profileUpdates)
+        .eq("id", signInData.user.id);
+    } else {
+      // Profile missing (edge case: trigger failed on initial signup) — create it now
+      const meta = signInData.user.user_metadata || {};
+      const baseUsername = (email.split("@")[0] || "student").replace(/[^a-zA-Z0-9_]/g, "").toLowerCase();
+      await supabase.from("profiles").insert({
+        id: signInData.user.id,
+        full_name: meta.full_name || baseUsername,
+        username: `${baseUsername}_${signInData.user.id.slice(0, 6)}`,
+        email: signInData.user.email || email,
+        roll_number: meta.roll_number || null,
+        whatsapp_number: meta.whatsapp_number || null,
+        gender: gender || meta.gender || null,
+        institute: meta.institute || "Other",
+        department: meta.department || "Computer Science & Technology",
+        semester: meta.semester || "1st Semester",
+        role: "student",
+        experience_level: "Beginner",
+        profile_completion: 60,
+        last_login_at: new Date().toISOString(),
+      });
     }
   }
 
@@ -247,7 +279,64 @@ export async function getCurrentUser() {
     .single();
 
   if (profileError || !profile) {
-    return null;
+    // Profile missing — could happen if DB trigger failed during signup.
+    // Attempt an emergency upsert so the user can continue without logging out.
+    const meta = authUser.user_metadata || {};
+    const emailLocal = (authUser.email || "").split("@")[0];
+    const baseUsername = emailLocal.replace(/[^a-zA-Z0-9_]/g, "").toLowerCase() || "student";
+    await supabase.from("profiles").upsert(
+      {
+        id: authUser.id,
+        full_name: meta.full_name || baseUsername,
+        username: `${baseUsername}_${authUser.id.slice(0, 6)}`,
+        email: authUser.email || "",
+        roll_number: meta.roll_number || null,
+        whatsapp_number: meta.whatsapp_number || null,
+        gender: meta.gender || null,
+        institute: meta.institute || "Other",
+        department: meta.department || "Computer Science & Technology",
+        semester: meta.semester || "1st Semester",
+        role: "student",
+        experience_level: "Beginner",
+        profile_completion: 60,
+        last_login_at: new Date().toISOString(),
+      },
+      { onConflict: "id", ignoreDuplicates: false }
+    );
+
+    // Re-fetch after upsert
+    const { data: retryProfile } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", authUser.id)
+      .single();
+
+    if (!retryProfile) return null;
+
+    return {
+      id: retryProfile.id,
+      fullName: retryProfile.full_name,
+      username: retryProfile.username,
+      email: retryProfile.email,
+      rollNumber: retryProfile.roll_number || undefined,
+      whatsappNumber: retryProfile.whatsapp_number || undefined,
+      gender: retryProfile.gender || undefined,
+      avatar: retryProfile.avatar_url || undefined,
+      institute: retryProfile.institute,
+      department: retryProfile.department,
+      semester: retryProfile.semester,
+      bio: retryProfile.bio || undefined,
+      githubUrl: retryProfile.github_url || undefined,
+      portfolioUrl: retryProfile.portfolio_url || undefined,
+      linkedinUrl: retryProfile.linkedin_url || undefined,
+      facebookUrl: retryProfile.facebook_url || undefined,
+      instagramUrl: retryProfile.instagram_url || undefined,
+      experienceLevel: retryProfile.experience_level,
+      role: retryProfile.role,
+      profileCompletion: retryProfile.profile_completion,
+      lastLoginAt: retryProfile.last_login_at || undefined,
+      joinedAt: retryProfile.created_at,
+    };
   }
 
   return {
@@ -255,6 +344,7 @@ export async function getCurrentUser() {
     fullName: profile.full_name,
     username: profile.username,
     email: profile.email,
+    rollNumber: profile.roll_number || undefined,
     whatsappNumber: profile.whatsapp_number || undefined,
     gender: profile.gender || undefined,
     avatar: profile.avatar_url || undefined,
@@ -270,6 +360,7 @@ export async function getCurrentUser() {
     experienceLevel: profile.experience_level,
     role: profile.role,
     profileCompletion: profile.profile_completion,
+    lastLoginAt: profile.last_login_at || undefined,
     joinedAt: profile.created_at,
   };
 }
