@@ -116,16 +116,32 @@ export function Footer() {
           <p className="text-xs text-muted-foreground">
             © {currentYear} {APP_NAME}. {t("footer.copyright", "All rights reserved.")}
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground" suppressHydrationWarning>
             {language === "bn" ? (
               <>
-                 তৈরি করেছেন{" "}
-                <span className="font-semibold text-foreground">Alif</span> 🛠
+                ডেভেলপ করেছেন{" "}
+                <a
+                  href="https://www.facebook.com/codewithalif"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-foreground hover:text-primary hover:underline transition-colors"
+                >
+                  Alif
+                </a>{" "}
+                🛠
               </>
             ) : (
               <>
-                Developed with 🛠 by{" "}
-                <span className="font-semibold text-foreground">Alif</span>
+                Developed by{" "}
+                <a
+                  href="https://www.facebook.com/codewithalif"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-foreground hover:text-primary hover:underline transition-colors"
+                >
+                  Alif_Hosen
+                </a>{" "}
+                
               </>
             )}
           </p>
