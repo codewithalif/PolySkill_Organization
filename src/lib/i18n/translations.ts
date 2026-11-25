@@ -25,7 +25,7 @@ export const translations = {
     "hero.title1": "Build Skills. Create Projects.",
     "hero.title2": "Find Your People.",
     "hero.subtitle":
-      "One platform for polytechnic students to learn, collaborate, showcase projects, and grow together.",
+      "PolySkill is the all-in-one platform for polytechnic students to learn, collaborate, showcase projects, and grow together.",
     "hero.exploreBtn": "Explore Projects",
     "hero.joinBtn": "Join PolySkill",
     "hero.trustedBy": "Trusted by students from 50+ polytechnic institutes",
@@ -161,7 +161,7 @@ export const translations = {
     "hero.title1": "দক্ষতা বাড়ান। প্রজেক্ট বানান।",
     "hero.title2": "নিজের টিম খুঁজে নিন।",
     "hero.subtitle":
-      "পলিটেকনিক শিক্ষার্থীদের একসাথে শেখা, প্রজেক্ট প্রদর্শন ও টিম গঠনের একমাত্র পূর্ণাঙ্গ প্ল্যাটফর্ম।",
+      "PolySkill (পলিস্কিল) — পলিটেকনিক শিক্ষার্থীদের একসাথে শেখা, প্রজেক্ট প্রদর্শন ও টিম গঠনের একমাত্র পূর্ণাঙ্গ প্ল্যাটফর্ম।",
     "hero.exploreBtn": "প্রজেক্ট ঘুরে দেখুন",
     "hero.joinBtn": "পলি-স্কিলে যুক্ত হোন",
     "hero.trustedBy": "৫০টিরও বেশি পলিটেকনিক ইন্সটিটিউটের শিক্ষার্থীদের বিশ্বস্ত প্ল্যাটফর্ম",

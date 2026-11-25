@@ -167,7 +167,7 @@ export default function LandingPage() {
             <p className="mt-6 max-w-2xl text-base sm:text-lg md:text-xl text-slate-600 dark:text-muted-foreground leading-relaxed font-normal">
               {t(
                 "hero.subtitle",
-                "One platform for polytechnic students to learn, collaborate, showcase projects, and grow together."
+                "PolySkill is the all-in-one platform for polytechnic students to learn, collaborate, showcase projects, and grow together."
               )}
             </p>
 

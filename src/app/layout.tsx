@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     template: "%s | PolySkill",
   },
   description:
-    "The all-in-one platform for polytechnic diploma students in Bangladesh to master tech skills, build verified portfolio projects, and connect with teammates.",
+    "PolySkill is the dedicated platform for polytechnic diploma students in Bangladesh to master tech skills, build verified portfolio projects, and connect with teammates.",
   keywords: [
     "PolySkill",
     "polytechnic students Bangladesh",
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     siteName: "PolySkill",
     title: "PolySkill – Learn Skills. Build Projects. Find Your Team.",
     description:
-      "The all-in-one platform for polytechnic diploma students in Bangladesh to master tech skills, build verified portfolio projects, and connect with teammates.",
+      "PolySkill is the dedicated platform for polytechnic diploma students in Bangladesh to master tech skills, build verified portfolio projects, and connect with teammates.",
     images: [
       {
         url: "/polyskill-logo.png",
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "PolySkill – Learn Skills. Build Projects. Find Your Team.",
     description:
-      "The all-in-one platform for polytechnic diploma students in Bangladesh to master tech skills, build verified portfolio projects, and connect with teammates.",
+      "PolySkill is the dedicated platform for polytechnic diploma students in Bangladesh to master tech skills, build verified portfolio projects, and connect with teammates.",
     images: ["/polyskill-logo.png"],
   },
   robots: {
@@ -112,7 +112,12 @@ const structuredData = {
       "@id": `${siteUrl}/#organization`,
       name: "PolySkill",
       url: siteUrl,
-      logo: `${siteUrl}/polyskill-logo.png`,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/polyskill-logo.png`,
+        width: 512,
+        height: 512,
+      },
       description:
         "The dedicated skills development, project showcase, and collaboration platform for polytechnic diploma students in Bangladesh.",
     },
@@ -121,6 +126,7 @@ const structuredData = {
       "@id": `${siteUrl}/#website`,
       url: siteUrl,
       name: "PolySkill",
+      alternateName: ["Poly Skill"],
       description: "Learn Skills. Build Projects. Find Your Team.",
       publisher: {
         "@id": `${siteUrl}/#organization`,
