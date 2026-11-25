@@ -60,36 +60,62 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         auth: { persistSession: false },
       });
 
-      // Fetch public students
+      // Fetch public students (only students with non-empty usernames; exclude admin/sub-admin)
       const { data: students } = await supabase
         .from("profiles")
         .select("username, updated_at, created_at")
+        .eq("role", "student")
         .not("username", "is", null)
+        .neq("username", "")
         .limit(1000);
 
       if (students && students.length > 0) {
+        const seenUsernames = new Set<string>();
         studentRoutes = students
-          .filter((student) => Boolean(student.username))
+          .filter((student) => {
+            if (!student.username || typeof student.username !== "string") return false;
+            const clean = student.username.trim();
+            if (!clean || seenUsernames.has(clean.toLowerCase())) return false;
+            seenUsernames.add(clean.toLowerCase());
+            return true;
+          })
           .map((student) => ({
-            url: `${baseUrl}/explore/students/${encodeURIComponent(student.username)}`,
-            lastModified: student.updated_at ? new Date(student.updated_at) : now,
+            url: `${baseUrl}/explore/students/${encodeURIComponent(student.username.trim())}`,
+            lastModified: student.updated_at
+              ? new Date(student.updated_at)
+              : student.created_at
+              ? new Date(student.created_at)
+              : now,
             changeFrequency: "weekly" as const,
             priority: 0.7,
           }));
       }
 
-      // Fetch roadmaps
+      // Fetch published roadmaps
       const { data: roadmaps } = await supabase
         .from("roadmaps")
-        .select("slug, created_at")
+        .select("slug, updated_at, created_at")
+        .not("slug", "is", null)
+        .neq("slug", "")
         .limit(100);
 
       if (roadmaps && roadmaps.length > 0) {
+        const seenSlugs = new Set<string>();
         roadmapRoutes = roadmaps
-          .filter((roadmap) => Boolean(roadmap.slug))
+          .filter((roadmap) => {
+            if (!roadmap.slug || typeof roadmap.slug !== "string") return false;
+            const clean = roadmap.slug.trim();
+            if (!clean || seenSlugs.has(clean.toLowerCase())) return false;
+            seenSlugs.add(clean.toLowerCase());
+            return true;
+          })
           .map((roadmap) => ({
-            url: `${baseUrl}/roadmaps/${encodeURIComponent(roadmap.slug)}`,
-            lastModified: roadmap.created_at ? new Date(roadmap.created_at) : now,
+            url: `${baseUrl}/roadmaps/${encodeURIComponent(roadmap.slug.trim())}`,
+            lastModified: roadmap.updated_at
+              ? new Date(roadmap.updated_at)
+              : roadmap.created_at
+              ? new Date(roadmap.created_at)
+              : now,
             changeFrequency: "weekly" as const,
             priority: 0.8,
           }));
