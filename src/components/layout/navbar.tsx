@@ -196,12 +196,12 @@ export function Navbar() {
                   </DropdownMenu>
                 </div>
               ) : (
-                <div className="hidden items-center gap-2 sm:flex">
-                  <Button variant="ghost" size="sm" asChild className="rounded-full text-xs">
-                    <Link href="/login">{t("nav.signIn", "Log in")}</Link>
+                <div className="hidden items-center gap-2 sm:flex" data-auth-exempt="true">
+                  <Button variant="ghost" size="sm" asChild className="rounded-full text-xs" data-auth-exempt="true">
+                    <Link href="/login" data-auth-exempt="true">{t("nav.signIn", "Log in")}</Link>
                   </Button>
-                  <Button size="sm" asChild className="rounded-full text-xs bg-gradient-to-r from-primary to-[#6355EE] hover:opacity-90 shadow-[0_0_15px_-3px_rgba(120,107,250,0.4)]">
-                    <Link href="/register">{t("nav.register", "Join PolySkill")}</Link>
+                  <Button size="sm" asChild className="rounded-full text-xs bg-gradient-to-r from-primary to-[#6355EE] hover:opacity-90 shadow-[0_0_15px_-3px_rgba(120,107,250,0.4)]" data-auth-exempt="true">
+                    <Link href="/register" data-auth-exempt="true">{t("nav.register", "Join PolySkill")}</Link>
                   </Button>
                 </div>
               )}
@@ -213,6 +213,7 @@ export function Navbar() {
             variant="ghost"
             size="icon"
             className="h-9 w-9 md:hidden"
+            data-auth-exempt="true"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (

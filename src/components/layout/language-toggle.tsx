@@ -13,6 +13,7 @@ export function LanguageToggle() {
         variant="ghost"
         size="sm"
         className="h-9 px-2.5 text-xs font-medium gap-1.5 text-muted-foreground"
+        data-auth-exempt="true"
       >
         <Languages className="h-4 w-4" />
         <span className="font-semibold text-xs">EN</span>
@@ -25,6 +26,7 @@ export function LanguageToggle() {
       variant="ghost"
       size="sm"
       className="h-9 px-2.5 text-xs font-medium gap-1.5 hover:bg-accent transition-colors"
+      data-auth-exempt="true"
       onClick={toggleLanguage}
       title={language === "en" ? "বাংলা ভাষায় পরিবর্তন করুন" : "Switch to English"}
       aria-label="Toggle Language"
