@@ -20,6 +20,7 @@ import { useLanguage } from "@/providers/language-provider";
 import { HeroBackgroundContainer } from "@/components/home/backgrounds/hero-background-container";
 import { ThemeSwitcherPopover } from "@/components/home/backgrounds/theme-switcher-popover";
 import { ThemeId, DEFAULT_THEME, STORAGE_KEY } from "@/components/home/backgrounds/types";
+import { LandingMetrics } from "@/components/home/landing-metrics";
 
 export default function LandingPage() {
   const { t } = useLanguage();
@@ -215,6 +216,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Key Metrics Bento Display (Live & Auth-Aware) */}
+      <LandingMetrics />
 
       {/* Features Bento Grid Section */}
       <section className="py-20 md:py-28 relative">
