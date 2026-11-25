@@ -138,6 +138,15 @@ html.splash-dismissed #polyskill-welcome-splash {
   animation: polyGridMove 25s linear infinite;
 }
 
+@media (max-width: 768px) {
+  .poly-bg-orb-1,
+  .poly-bg-orb-2,
+  .poly-bg-orb-3,
+  .poly-bg-grid {
+    animation: none !important;
+  }
+}
+
 @keyframes polyFloat1 {
   0% {
     transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
@@ -208,22 +217,20 @@ html {
   background: color-mix(in oklch, var(--foreground) 35%, transparent);
 }
 
-/* Modern Spring Pop-Up Scroll Reveal System */
+/* Modern Hardware-Accelerated Pop-Up Scroll Reveal System */
 .poly-scroll-reveal {
   opacity: 0;
-  transform: translateY(42px) scale(0.92);
-  filter: blur(4px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(24px);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform, filter;
+  will-change: transform, opacity;
 }
 
 .poly-scroll-revealed {
   opacity: 1 !important;
-  transform: translateY(0) scale(1) !important;
-  filter: blur(0) !important;
+  transform: translateY(0) !important;
+  will-change: auto; /* Release GPU compositing memory once revealed */
 }
 
 @media (prefers-reduced-motion: reduce) {

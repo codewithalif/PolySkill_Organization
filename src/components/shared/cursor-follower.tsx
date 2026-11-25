@@ -18,6 +18,15 @@ function subscribeFinePointer(callback: () => void) {
 
 function getFinePointerSnapshot() {
   if (typeof window === "undefined") return false;
+  // Disable on mobile/touch screens to eliminate any tracking overhead on phones
+  if (
+    window.innerWidth < 768 ||
+    (typeof navigator !== "undefined" &&
+      navigator.maxTouchPoints > 0 &&
+      window.innerWidth < 1024)
+  ) {
+    return false;
+  }
   const finePointer = window.matchMedia("(pointer: fine)").matches;
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   return finePointer && !prefersReducedMotion;

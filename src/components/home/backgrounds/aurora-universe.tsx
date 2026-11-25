@@ -22,19 +22,25 @@ export function AuroraUniverseBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     let animId: number;
     let isVisible = !document.hidden;
+    let isIntersecting = true;
+
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
     let width = 0;
     let height = 0;
-    let dpr = 1;
     let stars: StarParticle[] = [];
+
+    const isMobileDevice = () =>
+      typeof window !== "undefined" &&
+      (window.innerWidth < 768 ||
+        (navigator.maxTouchPoints > 0 && window.innerWidth < 1024));
 
     const starColorsDark = [
       "rgba(244, 246, 252, ", // pearl white
@@ -52,18 +58,22 @@ export function AuroraUniverseBackground() {
 
     const initStars = () => {
       stars = [];
-      const count = Math.min(Math.floor((width * height) / 10000), 80);
+      const mobile = isMobileDevice();
+      const count = mobile
+        ? Math.min(Math.floor((width * height) / 24000), 24)
+        : Math.min(Math.floor((width * height) / 14000), 50);
+
       for (let i = 0; i < count; i++) {
         const cIdx = Math.floor(Math.random() * starColorsDark.length);
         stars.push({
           x: Math.random() * width,
           y: Math.random() * height,
-          radius: Math.random() * 1.8 + 0.6,
+          radius: Math.random() * 1.5 + 0.6,
           alpha: Math.random() * 0.7 + 0.3,
-          twinkleSpeed: 0.0015 + Math.random() * 0.0025,
+          twinkleSpeed: 0.0012 + Math.random() * 0.002,
           twinklePhase: Math.random() * Math.PI * 2,
-          vx: (Math.random() - 0.5) * 0.15,
-          vy: -Math.random() * 0.25 - 0.05, // gentle upward drift
+          vx: (Math.random() - 0.5) * 0.1,
+          vy: -Math.random() * 0.2 - 0.04,
           colorDark: starColorsDark[cIdx],
           colorLight: starColorsLight[cIdx],
         });
@@ -74,7 +84,9 @@ export function AuroraUniverseBackground() {
       const rect = canvas.getBoundingClientRect();
       width = rect.width;
       height = rect.height;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      const mobile = isMobileDevice();
+      const dpr = mobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
 
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
@@ -92,18 +104,20 @@ export function AuroraUniverseBackground() {
       amp: number,
       freq: number,
       speed: number,
+      step: number,
       colorStops: { stop: number; color: string }[]
     ) => {
       const baseY = height * yOffsetPercent;
-      const step = 20;
 
       ctx.beginPath();
       ctx.moveTo(0, height);
       ctx.lineTo(0, baseY);
 
       for (let x = 0; x <= width; x += step) {
-        const angle = (x * freq) + time * speed;
-        const wave = Math.sin(angle) * amp + Math.cos(angle * 0.5 + time * speed * 0.7) * (amp * 0.5);
+        const angle = x * freq + time * speed;
+        const wave =
+          Math.sin(angle) * amp +
+          Math.cos(angle * 0.5 + time * speed * 0.7) * (amp * 0.45);
         ctx.lineTo(x, baseY + wave);
       }
 
@@ -111,9 +125,9 @@ export function AuroraUniverseBackground() {
       ctx.closePath();
 
       const ribbonGrad = ctx.createLinearGradient(0, baseY - amp, 0, height);
-      colorStops.forEach((cs) => {
-        ribbonGrad.addColorStop(cs.stop, cs.color);
-      });
+      for (let i = 0; i < colorStops.length; i++) {
+        ribbonGrad.addColorStop(colorStops[i].stop, colorStops[i].color);
+      }
 
       ctx.fillStyle = ribbonGrad;
       ctx.fill();
@@ -123,6 +137,8 @@ export function AuroraUniverseBackground() {
       ctx.clearRect(0, 0, width, height);
 
       const isDark = document.documentElement.classList.contains("dark");
+      const mobile = isMobileDevice();
+      const ribbonStep = mobile ? 36 : 22;
 
       // Backdrop gradient
       const spaceGrad = ctx.createLinearGradient(0, 0, 0, height);
@@ -146,18 +162,19 @@ export function AuroraUniverseBackground() {
       drawAuroraRibbon(
         time,
         0.18,
-        45,
+        mobile ? 32 : 45,
         0.003,
-        0.0006,
+        0.0005,
+        ribbonStep,
         isDark
           ? [
-              { stop: 0, color: "rgba(120, 107, 250, 0.28)" },
-              { stop: 0.4, color: "rgba(99, 85, 238, 0.15)" },
+              { stop: 0, color: "rgba(120, 107, 250, 0.25)" },
+              { stop: 0.45, color: "rgba(99, 85, 238, 0.12)" },
               { stop: 1, color: "rgba(0, 0, 0, 0)" },
             ]
           : [
-              { stop: 0, color: "rgba(120, 107, 250, 0.12)" },
-              { stop: 0.4, color: "rgba(99, 85, 238, 0.06)" },
+              { stop: 0, color: "rgba(120, 107, 250, 0.10)" },
+              { stop: 0.45, color: "rgba(99, 85, 238, 0.05)" },
               { stop: 1, color: "rgba(248, 250, 252, 0)" },
             ]
       );
@@ -166,38 +183,19 @@ export function AuroraUniverseBackground() {
       drawAuroraRibbon(
         time,
         0.28,
-        55,
+        mobile ? 38 : 55,
         0.0035,
-        -0.0007,
+        -0.0006,
+        ribbonStep,
         isDark
           ? [
-              { stop: 0, color: "rgba(53, 198, 216, 0.25)" },
-              { stop: 0.35, color: "rgba(66, 214, 164, 0.14)" },
+              { stop: 0, color: "rgba(53, 198, 216, 0.22)" },
+              { stop: 0.4, color: "rgba(66, 214, 164, 0.11)" },
               { stop: 1, color: "rgba(0, 0, 0, 0)" },
             ]
           : [
-              { stop: 0, color: "rgba(14, 165, 233, 0.10)" },
-              { stop: 0.35, color: "rgba(16, 185, 129, 0.05)" },
-              { stop: 1, color: "rgba(248, 250, 252, 0)" },
-            ]
-      );
-
-      // Aurora Curtain 3: Upper Lavender / Sky Shimmer
-      drawAuroraRibbon(
-        time,
-        0.08,
-        35,
-        0.004,
-        0.0009,
-        isDark
-          ? [
-              { stop: 0, color: "rgba(155, 140, 250, 0.2)" },
-              { stop: 0.5, color: "rgba(53, 198, 216, 0.08)" },
-              { stop: 1, color: "rgba(0, 0, 0, 0)" },
-            ]
-          : [
-              { stop: 0, color: "rgba(120, 107, 250, 0.08)" },
-              { stop: 0.5, color: "rgba(53, 198, 216, 0.04)" },
+              { stop: 0, color: "rgba(14, 165, 233, 0.09)" },
+              { stop: 0.4, color: "rgba(16, 185, 129, 0.04)" },
               { stop: 1, color: "rgba(248, 250, 252, 0)" },
             ]
       );
@@ -205,6 +203,7 @@ export function AuroraUniverseBackground() {
       ctx.restore();
 
       // Floating particles / stars
+      // Replaced createRadialGradient loop with fast 2-pass arc (zero GC allocation)
       for (let i = 0; i < stars.length; i++) {
         const s = stars[i];
 
@@ -222,49 +221,61 @@ export function AuroraUniverseBackground() {
 
         const baseColor = isDark ? s.colorDark : s.colorLight;
 
-        // Halo
-        const glowRadius = s.radius * (isDark ? 3 : 2);
-        const starGlow = ctx.createRadialGradient(
-          s.x,
-          s.y,
-          0,
-          s.x,
-          s.y,
-          glowRadius
-        );
-        starGlow.addColorStop(0, `${baseColor}${twinkle * (isDark ? 1 : 0.6)})`);
-        starGlow.addColorStop(1, `${baseColor}0)`);
-
-        ctx.fillStyle = starGlow;
+        // Soft star halo
+        ctx.fillStyle = `${baseColor}${twinkle * (isDark ? 0.25 : 0.18)})`;
         ctx.beginPath();
-        ctx.arc(s.x, s.y, glowRadius, 0, Math.PI * 2);
+        ctx.arc(s.x, s.y, s.radius * 2.2, 0, Math.PI * 2);
         ctx.fill();
 
         // Star core
         ctx.fillStyle = isDark
-          ? `rgba(255, 255, 255, ${Math.min(twinkle * 1.2, 1)})`
-          : `rgba(99, 85, 238, ${Math.min(twinkle * 0.9, 0.9)})`;
+          ? `rgba(255, 255, 255, ${Math.min(twinkle * 1.1, 1)})`
+          : `rgba(99, 85, 238, ${Math.min(twinkle * 0.9, 0.85)})`;
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.radius * 0.7, 0, Math.PI * 2);
+        ctx.arc(s.x, s.y, s.radius * 0.65, 0, Math.PI * 2);
         ctx.fill();
       }
     };
 
-    let start = performance.now();
+    let lastFrameTime = performance.now();
+
     const loop = (timestamp: number) => {
-      if (!isVisible) return;
-      const elapsed = timestamp - start;
-      renderFrame(elapsed);
+      if (!isVisible || !isIntersecting) return;
+
+      const mobile = isMobileDevice();
+      const targetInterval = mobile ? 31 : 16;
+      const delta = timestamp - lastFrameTime;
+
+      if (delta >= targetInterval) {
+        lastFrameTime = timestamp - (delta % targetInterval);
+        renderFrame(timestamp);
+      }
+
       animId = requestAnimationFrame(loop);
     };
 
     handleResize();
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isIntersecting = entry.isIntersecting;
+        if (isIntersecting && !document.hidden && !prefersReducedMotion) {
+          lastFrameTime = performance.now();
+          cancelAnimationFrame(animId);
+          animId = requestAnimationFrame(loop);
+        } else {
+          cancelAnimationFrame(animId);
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
 
     const handleVisibilityChange = () => {
       isVisible = !document.hidden;
-      if (isVisible && !prefersReducedMotion) {
-        start = performance.now();
+      if (isVisible && isIntersecting && !prefersReducedMotion) {
+        lastFrameTime = performance.now();
         cancelAnimationFrame(animId);
         animId = requestAnimationFrame(loop);
       } else {
@@ -280,6 +291,7 @@ export function AuroraUniverseBackground() {
 
     return () => {
       cancelAnimationFrame(animId);
+      observer.disconnect();
       window.removeEventListener("resize", handleResize);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
@@ -289,7 +301,7 @@ export function AuroraUniverseBackground() {
     <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
       <canvas
         ref={canvasRef}
-        className="w-full h-full block"
+        className="w-full h-full block transform-gpu"
         aria-hidden="true"
       />
     </div>
