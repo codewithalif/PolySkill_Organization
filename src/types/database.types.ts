@@ -15,6 +15,7 @@ export interface Database {
           full_name: string
           username: string
           email: string
+          roll_number?: string | null
           whatsapp_number: string | null
           gender: "Male" | "Female" | "Other" | null
           avatar_url: string | null
@@ -30,6 +31,7 @@ export interface Database {
           experience_level: "Beginner" | "Intermediate" | "Advanced"
           role: "student" | "sub-admin" | "admin"
           profile_completion: number
+          last_login_at?: string | null
           created_at: string
           updated_at: string
         }
