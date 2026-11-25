@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import Link from "next/link";
@@ -23,16 +24,48 @@ interface StudentProfilePageProps {
   params: Promise<{ username: string }>;
 }
 
-export async function generateMetadata({ params }: StudentProfilePageProps) {
+export async function generateMetadata({
+  params,
+}: StudentProfilePageProps): Promise<Metadata> {
   await connection();
   const { username } = await params;
   const res = await getPublicProfileAction(username);
   if (!res.success || !res.data) {
-    return { title: "Student Not Found | PolySkill" };
+    return {
+      title: "Student Not Found",
+      description: "The requested polytechnic student profile could not be found on PolySkill.",
+      robots: { index: false, follow: false },
+    };
   }
+
+  const profile = res.data;
+  const title = `${profile.full_name} (@${profile.username}) - ${profile.department || "Polytechnic Student"}`;
+  const description =
+    profile.bio ||
+    `Polytechnic student profile of ${profile.full_name} from ${profile.institute || "Bangladesh"}. Explore skills, projects, and connect on PolySkill.`;
+  const canonicalUrl = `/explore/students/${profile.username}`;
+
   return {
-    title: `${res.data.full_name} (@${res.data.username}) | PolySkill`,
-    description: res.data.bio || `Polytechnic student profile of ${res.data.full_name} on PolySkill.`,
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${title} | PolySkill`,
+      description,
+      url: canonicalUrl,
+      type: "profile",
+      images: profile.avatar_url
+        ? [{ url: profile.avatar_url, alt: profile.full_name }]
+        : [{ url: "/polyskill-logo.png", alt: "PolySkill Logo" }],
+    },
+    twitter: {
+      card: "summary",
+      title: `${title} | PolySkill`,
+      description,
+      images: profile.avatar_url ? [profile.avatar_url] : ["/polyskill-logo.png"],
+    },
   };
 }
 
@@ -141,8 +174,36 @@ export default async function StudentProfilePage({ params }: StudentProfilePageP
 
   const waUrl = getWhatsAppUrl(student.whatsapp_number);
 
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: student.full_name,
+    alternateName: student.username,
+    description: student.bio || undefined,
+    image: student.avatar_url || undefined,
+    affiliation: student.institute
+      ? {
+          "@type": "Organization",
+          name: student.institute,
+        }
+      : undefined,
+    jobTitle: student.department
+      ? `${student.department} Student`
+      : "Polytechnic Student",
+    url: `https://polyskill-ten.vercel.app/explore/students/${student.username}`,
+    sameAs: [
+      student.github_url,
+      student.portfolio_url,
+      student.linkedin_url,
+    ].filter(Boolean),
+  };
+
   return (
     <div className="container max-w-5xl mx-auto py-8 px-4 space-y-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
       {/* Back Button */}
       <div>
         <Button asChild variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">

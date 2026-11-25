@@ -40,7 +40,7 @@ export function Footer() {
       links: [
         { label: t("footer.aboutUs", "About Us"), href: "/about" },
         { label: t("footer.howItWorks", "How It Works"), href: "/about#how-it-works" },
-        { label: t("footer.faq", "FAQ"), href: "/about#faq" },
+        { label: t("footer.pillars", "Core Pillars"), href: "/about#pillars" },
       ],
     },
     {

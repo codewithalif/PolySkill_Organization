@@ -1,9 +1,22 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import Image from "next/image";
 import Link from "next/link";
 
 export const instant = false;
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
+};
 
 import { logoutAction, getCurrentUser } from "@/actions/auth";
 import { getActiveAnnouncementsAction } from "@/actions/announcements";

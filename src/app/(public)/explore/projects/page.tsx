@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getProjectsAction } from "@/actions/projects";
 
@@ -10,9 +11,26 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Heart, Bookmark, ExternalLink, Search, FolderKanban } from "lucide-react";
 
-export const metadata = {
-  title: "Explore Projects | PolySkill",
-  description: "Discover polytechnic innovation across Bangladesh",
+export const metadata: Metadata = {
+  title: "Explore Polytechnic Student Projects",
+  description:
+    "Browse innovative assignments, software prototypes, engineering solutions, and open-source projects built by polytechnic diploma students across Bangladesh.",
+  alternates: {
+    canonical: "/explore/projects",
+  },
+  openGraph: {
+    title: "Explore Polytechnic Student Projects | PolySkill",
+    description:
+      "Browse innovative assignments, software prototypes, engineering solutions, and open-source projects built by polytechnic diploma students across Bangladesh.",
+    url: "/explore/projects",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Explore Polytechnic Student Projects | PolySkill",
+    description:
+      "Browse innovative assignments, software prototypes, engineering solutions, and open-source projects built by polytechnic diploma students across Bangladesh.",
+  },
 };
 
 export default async function ExploreProjectsPage({

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getRoadmapsAction } from "@/actions/roadmaps";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,9 +9,26 @@ import { Map, Code, Smartphone, Shield, ArrowRight, Clock } from "lucide-react";
 
 export const instant = false;
 
-export const metadata = {
-  title: "Learning Roadmaps | PolySkill",
-  description: "Curated learning paths for polytechnic diploma students in Bangladesh",
+export const metadata: Metadata = {
+  title: "Tech Learning Roadmaps for Polytechnic Students",
+  description:
+    "Curated, step-by-step engineering and software development learning roadmaps designed for polytechnic diploma students in Bangladesh.",
+  alternates: {
+    canonical: "/roadmaps",
+  },
+  openGraph: {
+    title: "Tech Learning Roadmaps | PolySkill",
+    description:
+      "Curated, step-by-step engineering and software development learning roadmaps designed for polytechnic diploma students in Bangladesh.",
+    url: "/roadmaps",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tech Learning Roadmaps | PolySkill",
+    description:
+      "Curated, step-by-step engineering and software development learning roadmaps designed for polytechnic diploma students in Bangladesh.",
+  },
 };
 
 const ICON_MAP: Record<string, React.ReactNode> = {

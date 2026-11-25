@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { getHtmlLessonsWithProgressAction } from "@/actions/lessons";
@@ -5,9 +6,26 @@ import { HtmlPlaylistClient } from "./html-playlist-client";
 
 export const instant = false;
 
-export const metadata = {
-  title: "Official HTML Curriculum | PolySkill Roadmaps",
-  description: "Official 28-part HTML course with sequential unlocking for polytechnic students",
+export const metadata: Metadata = {
+  title: "Official HTML Curriculum & Interactive Course",
+  description:
+    "Official 28-part HTML course with sequential unlocking and hands-on exercises tailored for polytechnic students in Bangladesh.",
+  alternates: {
+    canonical: "/roadmaps/web-development/html",
+  },
+  openGraph: {
+    title: "Official HTML Curriculum | PolySkill Roadmaps",
+    description:
+      "Official 28-part HTML course with sequential unlocking and hands-on exercises tailored for polytechnic students in Bangladesh.",
+    url: "/roadmaps/web-development/html",
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Official HTML Curriculum | PolySkill Roadmaps",
+    description:
+      "Official 28-part HTML course with sequential unlocking and hands-on exercises tailored for polytechnic students in Bangladesh.",
+  },
 };
 
 export default async function HtmlPlaylistPage({

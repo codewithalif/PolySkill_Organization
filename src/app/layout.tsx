@@ -33,13 +33,32 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+const siteUrl = "https://polyskill-ten.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "PolySkill – Learn Skills. Build Projects. Find Your Team.",
     template: "%s | PolySkill",
   },
   description:
-    "One platform for polytechnic students to learn, collaborate, showcase projects, and grow together.",
+    "The all-in-one platform for polytechnic diploma students in Bangladesh to master tech skills, build verified portfolio projects, and connect with teammates.",
+  keywords: [
+    "PolySkill",
+    "polytechnic students Bangladesh",
+    "diploma engineering skills",
+    "polytechnic project showcase",
+    "diploma in engineering",
+    "polytechnic computer technology",
+    "student team finder",
+    "tech learning roadmaps",
+  ],
+  authors: [{ name: "PolySkill Community" }],
+  creator: "PolySkill",
+  publisher: "PolySkill",
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: [
       { url: "/polyskill-logo.png", type: "image/png" },
@@ -48,6 +67,72 @@ export const metadata: Metadata = {
     shortcut: "/polyskill-logo.png",
     apple: "/polyskill-logo.png",
   },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName: "PolySkill",
+    title: "PolySkill – Learn Skills. Build Projects. Find Your Team.",
+    description:
+      "The all-in-one platform for polytechnic diploma students in Bangladesh to master tech skills, build verified portfolio projects, and connect with teammates.",
+    images: [
+      {
+        url: "/polyskill-logo.png",
+        width: 512,
+        height: 512,
+        alt: "PolySkill Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PolySkill – Learn Skills. Build Projects. Find Your Team.",
+    description:
+      "The all-in-one platform for polytechnic diploma students in Bangladesh to master tech skills, build verified portfolio projects, and connect with teammates.",
+    images: ["/polyskill-logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+};
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: "PolySkill",
+      url: siteUrl,
+      logo: `${siteUrl}/polyskill-logo.png`,
+      description:
+        "The dedicated skills development, project showcase, and collaboration platform for polytechnic diploma students in Bangladesh.",
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: "PolySkill",
+      description: "Learn Skills. Build Projects. Find Your Team.",
+      publisher: {
+        "@id": `${siteUrl}/#organization`,
+      },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${siteUrl}/explore/projects?search={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+      inLanguage: ["en", "bn"],
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -62,6 +147,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col relative" suppressHydrationWarning>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
         <Script
           id="splash-check"
           strategy="beforeInteractive"

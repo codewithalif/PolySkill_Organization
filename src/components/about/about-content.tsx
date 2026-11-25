@@ -76,7 +76,7 @@ export function AboutContent() {
       </section>
 
       {/* Story & Background */}
-      <section className="py-16 md:py-24 bg-[#080D19]/60">
+      <section id="how-it-works" className="py-16 md:py-24 bg-[#080D19]/60 scroll-mt-20">
         <div className="container max-w-5xl mx-auto px-4 space-y-16">
           <div className="grid gap-8 md:grid-cols-2 items-center">
             <div className="space-y-4">
@@ -156,7 +156,7 @@ export function AboutContent() {
           </div>
 
           {/* Pillars */}
-          <div className="space-y-8 pt-4">
+          <div id="pillars" className="space-y-8 pt-4 scroll-mt-20">
             <div className="text-center space-y-2">
               <h2 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
                 {t("about.pillarsTitle", "Core Pillars of PolySkill")}

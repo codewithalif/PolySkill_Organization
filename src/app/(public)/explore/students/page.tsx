@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { searchStudentsAction } from "@/actions/profiles";
 
@@ -52,9 +53,26 @@ function getWhatsAppUrl(phone?: string | null) {
   return `https://wa.me/${cleanNumber}`;
 }
 
-export const metadata = {
-  title: "Explore Students | PolySkill",
-  description: "Connect with polytechnic students across Bangladesh",
+export const metadata: Metadata = {
+  title: "Explore Polytechnic Students & Developers",
+  description:
+    "Discover talented polytechnic diploma students, software developers, and engineers across Bangladesh. Connect, collaborate on projects, or build your dream team.",
+  alternates: {
+    canonical: "/explore/students",
+  },
+  openGraph: {
+    title: "Explore Polytechnic Students & Developers | PolySkill",
+    description:
+      "Discover talented polytechnic diploma students, software developers, and engineers across Bangladesh. Connect, collaborate on projects, or build your dream team.",
+    url: "/explore/students",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Explore Polytechnic Students & Developers | PolySkill",
+    description:
+      "Discover talented polytechnic diploma students, software developers, and engineers across Bangladesh. Connect, collaborate on projects, or build your dream team.",
+  },
 };
 
 export default async function ExploreStudentsPage({
