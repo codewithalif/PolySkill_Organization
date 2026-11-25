@@ -197,11 +197,17 @@ export async function forgotPasswordAction(
     };
   }
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "https://polyskill-dip.vercel.app");
+
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(
     validation.data.email,
     {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback?next=/reset-password`,
+      redirectTo: `${siteUrl}/auth/callback?next=/reset-password`,
     }
   );
 

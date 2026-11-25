@@ -33,7 +33,7 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const siteUrl = "https://polyskill-ten.vercel.app";
+const siteUrl = "https://polyskill-dip.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { createClient } from "@supabase/supabase-js";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://polyskill-ten.vercel.app";
+  const baseUrl = "https://polyskill-dip.vercel.app";
   const now = new Date();
 
   // Core public static routes
