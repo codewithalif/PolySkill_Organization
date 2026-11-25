@@ -42,10 +42,11 @@ export const metadata: Metadata = {
     "One platform for polytechnic students to learn, collaborate, showcase projects, and grow together.",
   icons: {
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/polyskill-logo.png", type: "image/png" },
       { url: "/favicon.ico" },
     ],
-    apple: "/apple-icon.svg",
+    shortcut: "/polyskill-logo.png",
+    apple: "/polyskill-logo.png",
   },
 };
 

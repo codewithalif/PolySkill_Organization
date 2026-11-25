@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, ArrowLeft } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -35,8 +36,15 @@ export default function AuthLayout({
         <div className="w-full max-w-md space-y-6">
           <div className="flex flex-col items-center text-center space-y-2">
             <Link href="/" className="flex items-center gap-2 mb-2 group">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[#5643F5] text-white shadow-[0_0_20px_rgba(120,107,250,0.5)] group-hover:scale-105 transition-transform">
-                <Sparkles className="h-5 w-5" />
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden border border-border/60 bg-card/60 shadow-[0_0_20px_rgba(120,107,250,0.4)] group-hover:scale-105 transition-transform p-1">
+                <Image
+                  src="/polyskill-logo.png"
+                  alt="PolySkill Logo"
+                  width={36}
+                  height={36}
+                  className="w-full h-full object-contain"
+                  priority
+                />
               </div>
               <span className="font-heading text-2xl font-bold tracking-tight text-foreground">{APP_NAME}</span>
             </Link>

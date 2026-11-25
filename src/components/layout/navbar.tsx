@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -70,8 +71,15 @@ export function Navbar() {
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-[#786BFA] to-[#35C6D8] shadow-[0_0_16px_-2px_rgba(120,107,250,0.5)] transition-transform group-hover:scale-105">
-            <Sparkles className="h-4 w-4 text-white" />
+          <div className="relative flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden border border-border/60 bg-card/60 shadow-[0_0_16px_-2px_rgba(120,107,250,0.35)] transition-transform group-hover:scale-105 p-1">
+            <Image
+              src="/polyskill-logo.png"
+              alt="PolySkill Logo"
+              width={32}
+              height={32}
+              className="w-full h-full object-contain"
+              priority
+            />
           </div>
           <span className="font-heading text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
             {APP_NAME}

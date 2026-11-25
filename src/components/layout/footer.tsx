@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, Mail } from "lucide-react";
 import { APP_NAME } from "@/lib/constants";
@@ -62,8 +63,14 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-[#786BFA] to-[#35C6D8] shadow-[0_0_12px_-2px_rgba(120,107,250,0.5)] transition-transform group-hover:scale-105">
-                <Sparkles className="h-4 w-4 text-white" />
+              <div className="relative flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden border border-border/60 bg-card/60 shadow-[0_0_12px_-2px_rgba(120,107,250,0.35)] transition-transform group-hover:scale-105 p-1">
+                <Image
+                  src="/polyskill-logo.png"
+                  alt="PolySkill Logo"
+                  width={28}
+                  height={28}
+                  className="w-full h-full object-contain"
+                />
               </div>
               <span className="font-heading text-lg font-bold tracking-tight text-foreground">{APP_NAME}</span>
             </Link>

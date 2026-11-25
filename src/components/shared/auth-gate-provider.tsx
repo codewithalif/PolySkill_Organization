@@ -10,6 +10,7 @@ import {
   type FormEvent,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Lock,
@@ -317,8 +318,14 @@ export function AuthGateProvider({ children }: { children: ReactNode }) {
 
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary/20 via-primary/10 to-cyan-500/10 border border-primary/30 text-primary shadow-[0_0_20px_-3px_rgba(120,107,250,0.4)]">
-                <Lock className="h-6 w-6 stroke-[2.2] animate-pulse" />
+              <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden border border-primary/30 bg-card/60 shadow-[0_0_20px_-3px_rgba(120,107,250,0.4)] p-1.5">
+                <Image
+                  src="/polyskill-logo.png"
+                  alt="PolySkill Logo"
+                  width={36}
+                  height={36}
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <Badge

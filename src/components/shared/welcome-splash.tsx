@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Sparkles, ArrowRight, Zap, GraduationCap, Code2, Users } from "lucide-react";
 import { useLanguage } from "@/providers/language-provider";
 
@@ -92,11 +93,15 @@ export function WelcomeSplash() {
 
           {/* Center Glowing Logo Sphere */}
           <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full p-[2px] bg-gradient-to-tr from-cyan-500 via-indigo-500 to-violet-500 shadow-[0_0_35px_rgba(99,102,241,0.5)]">
-            <div className="w-full h-full rounded-full bg-slate-950/90 backdrop-blur-sm flex items-center justify-center group">
-              <div className="relative">
-                <Sparkles className="w-10 h-10 sm:w-12 sm:h-12 text-cyan-400 transition-all duration-300 group-hover:scale-110 drop-shadow-[0_0_15px_rgba(34,211,238,0.7)]" />
-                <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 absolute -bottom-1 -right-1 animate-pulse" />
-              </div>
+            <div className="w-full h-full rounded-full bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-3.5 group">
+              <Image
+                src="/polyskill-logo.png"
+                alt="PolySkill Logo"
+                width={56}
+                height={56}
+                className="w-full h-full object-contain transition-all duration-300 group-hover:scale-110 drop-shadow-[0_0_15px_rgba(34,211,238,0.7)]"
+                priority
+              />
             </div>
           </div>
         </div>

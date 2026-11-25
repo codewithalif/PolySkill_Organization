@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
+import Image from "next/image";
 import Link from "next/link";
 
 export const instant = false;
@@ -167,8 +168,14 @@ export default async function ProtectedLayout({
         <aside className="hidden w-64 shrink-0 border-r border-border/40 bg-card/30 backdrop-blur-xl lg:flex lg:flex-col">
           <div className="flex h-16 items-center border-b border-border/40 px-5">
             <Link href="/" className="flex items-center gap-2.5 font-heading font-bold text-lg tracking-tight hover:opacity-90 transition-opacity group">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-[#786BFA] to-[#35C6D8] shadow-[0_0_12px_-2px_rgba(120,107,250,0.5)]">
-                <Zap className="h-4 w-4 text-white" />
+              <div className="relative flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden border border-border/60 bg-card/60 shadow-[0_0_12px_-2px_rgba(120,107,250,0.35)] p-1">
+                <Image
+                  src="/polyskill-logo.png"
+                  alt="PolySkill Logo"
+                  width={28}
+                  height={28}
+                  className="w-full h-full object-contain"
+                />
               </div>
               <span className="text-foreground">PolySkill</span>
             </Link>
@@ -199,8 +206,14 @@ export default async function ProtectedLayout({
                 </SheetContent>
               </Sheet>
               <Link href="/" className="flex items-center gap-2 font-heading font-bold text-base hover:opacity-80 transition-opacity">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-tr from-[#786BFA] to-[#35C6D8]">
-                  <Zap className="h-3.5 w-3.5 text-white" />
+                <div className="relative flex h-7 w-7 items-center justify-center rounded-lg overflow-hidden border border-border/60 bg-card/60 p-0.5">
+                  <Image
+                    src="/polyskill-logo.png"
+                    alt="PolySkill Logo"
+                    width={24}
+                    height={24}
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <span>PolySkill</span>
               </Link>
