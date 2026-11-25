@@ -34,6 +34,7 @@ export function ThemeSwitcherPopover({
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger
+        data-auth-exempt="true"
         aria-label="Explore interactive background themes"
         className={cn(
           "group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium",
